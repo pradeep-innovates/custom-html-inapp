@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modal Form</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        text-align: center;
+        padding: 40px;
+        width: 80%;
+        box-shadow: 1px 2px 5px 0px rgba(0, 0, 0, 0.75);
+        border-radius: 10px;
+        max-width: 400px;
+      }
+
+      .modal.active {
+        display: block;
+      }
+
+      .modal h2 {
+        margin-bottom: 15px;
+      }
+
+      .close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        cursor: pointer;
+      }
+
+      .gender-labels {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        align-items: flex-start;
+        margin-top: 15px;
+        margin-bottom: 10px;
+        flex-direction: column;
+      }
+
+      /* Button CSS */
+      .modal button {
+        padding: 8px 15px;
+        border: none;
+        background: blue;
+        color: white;
+        cursor: pointer;
+        border-radius: 3px;
+        display: block;
+        margin: 0 auto;
+        margin-top: 15px;
+        width: 100%;
+        margin-bottom: 15px;
+      }
+
+      /* Error Message CSS */
+      .error-message {
+        color: red;
+        font-size: 14px;
+        margin-top: 5px;
+        display: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- First PopUp -->
+    <div id="modal1" class="modal active">
+      <span class="close" onclick="closebtn()">X</span>
+      <h2>Select Your Gender</h2>
+      <div class="gender-labels">
+        <!-- Gender Labels -->
+        <label><input type="radio" name="gender" value="male" /> Male</label>
+        <label
+          ><input type="radio" name="gender" value="female" /> Female</label
+        >
+        <label><input type="radio" name="gender" value="other" /> Other</label>
+      </div>
+      <!-- Label for Checkbox Agree BUtton -->
+      <label><input type="checkbox" id="agree" /> I agree</label>
+      <p id="error-message" class="error-message"></p>
+      <button id="submitBtn" onclick="submitForm()">Submit</button>
+    </div>
+
+    <!-- Second PopUp -->
+    <div id="modal2" class="modal">
+      <span class="close" onclick="closebtn()">X</span>
+      <h2 id="thankYouMessage">Thank You!</h2>
+      <button class="submitBtn" onclick="redirectUser()">Go SomeWhere</button>
+    </div>
+
+    <script>
+      function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove("active");
+      }
+
+      function closebtn() {
+        document.location.href = "wzrk://thisleadstonowhere";
+      }
+
+      function clearForm() {
+        document
+          .querySelectorAll('input[name="gender"]')
+          .forEach((input) => (input.checked = false));
+        document.getElementById("agree").checked = false;
+        document.getElementById("error-message").innerText = "";
+        document.getElementById("error-message").style.display = "none";
+      }
+
+      function submitForm() {
+        const checkbox = document.getElementById("agree");
+        const gender = document.querySelector('input[name="gender"]:checked');
+        const errorMessage = document.getElementById("error-message");
+
+        errorMessage.innerText = "";
+        errorMessage.style.display = "none";
+
+        if (!gender) {
+          errorMessage.innerText = "Please select your gender.";
+          errorMessage.style.display = "block";
+          errorMessage.classList.add("error-messagedddd");
+          return;
+        }
+        if (!checkbox.checked) {
+          errorMessage.innerText = "You must agree before submitting.";
+          errorMessage.style.display = "block";
+          return;
+        }
+
+        console.log("User Gender Selected", gender.value);
+
+        const userProfile = {
+          TataCliq_Gender: gender.value,
+        };
+
+        if (window.CleverTap) {
+          CleverTap.pushProfile(JSON.stringify(userProfile));
+          console.log("CleverTap profile updated for Android:", userProfile);
+        } else if (
+          window.webkit &&
+          window.webkit.messageHandlers &&
+          window.webkit.messageHandlers.clevertap
+        ) {
+          window.webkit.messageHandlers.clevertap.postMessage({
+            action: "profilePush",
+            properties: userProfile,
+          });
+          console.log("CleverTap profile updated for iOS:", userProfile);
+        } else {
+          console.warn("CleverTap is not initialized.");
+        }
+
+        document.getElementById(
+          "thankYouMessage"
+        ).innerText = `Thanks for submitting your response`;
+        document.getElementById("modal1").classList.remove("active");
+        document.getElementById("modal1").style.display = "none";
+        document.getElementById("modal2").classList.add("active");
+      }
+
+      function redirectUser() {
+        const redirectUrl = window.CleverTap
+          ? "https://www.tatacliq.com/"
+          : "comtultatacliq://www.tatacliq.com/";
+        window.location.href = redirectUrl;
+      }
+
+      clearForm();
+    </script>
+  </body>
+</html>

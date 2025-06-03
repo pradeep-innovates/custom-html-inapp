@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Survey Form</title>
+    <script>
+      var eventName = "Survey Submitted";
+    </script>
+    <style>
+      :root {
+        --image-url: url("https://i.pinimg.com/564x/c4/8a/da/c48ada5ee56d733592ca14c1483efd16.jpg");
+        --options: Whatsapp, LinkedIn, Facebook, Email, Search engine,
+          Word of mouth, Podcast, Other;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-size: cover;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        max-width: 600px;
+        width: 90%;
+        background-size: cover;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .form-container {
+        padding: 20px;
+        background: var(--image-url) no-repeat center center;
+        border-radius: 8px;
+      }
+
+      .form-container h2 {
+        margin-bottom: 20px;
+      }
+
+      .option {
+        display: flex;
+        align-items: center;
+        margin: 12px 0;
+      }
+
+      .option input[type="checkbox"] {
+        margin-right: 10px;
+      }
+
+      textarea {
+        width: calc(100% - 20px);
+        height: 80px;
+        margin-top: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        resize: none;
+        font-size: 16px;
+        box-sizing: border-box;
+      }
+
+      .submit-btn {
+        margin-top: 20px;
+        padding: 12px;
+        background-color: black;
+        color: white;
+        border: none;
+        width: 100%;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      .submit-btn:hover {
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="form-container">
+        <h2>Where did you hear about us?</h2>
+        <form id="surveyForm">
+          <script>
+            let options = getComputedStyle(document.documentElement)
+              .getPropertyValue("--options")
+              .split(", ");
+            let otherIndex = options.indexOf("Other");
+            if (otherIndex > -1) options.splice(otherIndex, 1);
+            options = options.sort(() => Math.random() - 0.5);
+            options.push("Other");
+
+            let firstOption = options[0];
+            console.log("First Option:", firstOption); // Log the first value
+
+            options.forEach((option) => {
+              document.write(`
+<div class="option">
+<input type="checkbox" name="source" value="${option
+                .toLowerCase()
+                .replace(/ /g, "_")}" id="${option
+                .toLowerCase()
+                .replace(/ /g, "_")}">
+<label for="${option.toLowerCase().replace(/ /g, "_")}">${option}</label>
+</div>
+`);
+            });
+          </script>
+          <textarea
+            name="other"
+            id="otherText"
+            placeholder="Leave a other"
+            disabled
+          ></textarea>
+          <button type="submit" onclick="close_btn()" class="submit-btn">
+            SUBMIT
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const otherCheckbox = document.getElementById("other");
+      const otherText = document.getElementById("otherText");
+
+      otherCheckbox.addEventListener("change", function () {
+        otherText.disabled = !this.checked;
+      });
+
+      document
+        .getElementById("surveyForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          const result = {};
+          const checkboxes = document.querySelectorAll(
+            'input[name="source"]:checked'
+          );
+          checkboxes.forEach((checkbox) => {
+            result[checkbox.value] = "true";
+          });
+
+          result["first_option"] = firstOption; // Add first option to the result hash map
+
+          if (otherCheckbox.checked && otherText.value) {
+            result.other = otherText.value;
+          }
+          console.log("Survey Result:", result);
+
+          if (window.CleverTap) {
+            CleverTap.pushEvent(eventName, JSON.stringify(result));
+          }
+          if (
+            window.webkit &&
+            window.webkit.messageHandlers &&
+            window.webkit.messageHandlers.clevertap
+          ) {
+            const message = {
+              action: "recordEventWithProps",
+              event: eventName,
+              properties: result,
+            };
+            window.webkit.messageHandlers.clevertap.postMessage(message);
+          }
+        });
+
+      function close_btn() {
+        if (window.CleverTap) {
+          CleverTap.dismissInAppNotification();
+        }
+        if (
+          window.webkit &&
+          window.webkit.messageHandlers &&
+          window.webkit.messageHandlers.clevertap
+        ) {
+          const messageData = {
+            action: "triggerInAppAction",
+            actionJson: { type: "close" },
+            callToAction: "Dismiss Button",
+            buttonId: "dismissButton",
+          };
+          window.webkit.messageHandlers.clevertap.postMessage(messageData);
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<link rel="preconnect" href="https://assets.tatacliq.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" as="style"
+onload="this.onload=null;this.rel='stylesheet'">
+<script src="https://cdn.jsdelivr.net/npm/d3-ease@3"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.16/dist/sweetalert2.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+</head>
+
+
+<body>
+<script type="text/javascript" charset="utf-8">
+//change font color for spin wheel below
+var textcolor = "black";
+//set popup background color/image
+var popupbg = "https://assets.tatacliq.com/medias/sys_master/images/52084207878174.png)";
+//Spin button background color
+var spinbgcolor = "#FACBAE";
+//set Title text color for Pop up
+var titlecolor = "#FFFFFF";
+//set confirmation button text
+var titletext = "<span style='font-weight:700;text-transform:uppercase;'>Congratulations!</span>";
+var confirmbuttontext = "CLAIM NOW";
+//confirmation button color
+// buttoncolor = "#A13941FF"
+//insert sections title and colors you want if you can add images to be user for the pop up as below
+var data = [
+{ "label": "10% Off", "color": "#F4845F", "probability": 0, "discount": "with code: NEW300 ", "offerpage": "https://google.com" },
+{ "label": "15% Off*", "color": "#B20000", "probability": 30, "discount": "with code: SPLASH15", "offerpage": "https://google.com" },
+{ "label": "₹500 Off", "color": "#FBC4AB", "probability": 0, "discount": "with code: NEW300", "offerpage": "https://google.com" },
+{ "label": "20% off*", "color": "#F7B267", "probability": 40, "discount": "with code: JUSTFORYOU", "offerpage": "https://google.com" },
+{ "label": "₹200 Off", "color": "#D80000", "probability": 30, "discount": "with code: SAVEMORE", "offerpage": "https://google.com" },
+{ "label": "25% Off", "color": "#FFDAB9", "probability": 0, "discount": "with code: EOSS10", "offerpage": "https://google.com" },
+];
+</script>
+<style type="text/css">
+* {
+font-family: 'Outfit', sans-serif;
+margin: 0;
+padding: 0;
+}
+body {
+height: 95dvh;
+display: flex;
+flex-direction: column;
+justify-content: center;
+}
+#container {
+background-image: url(https://assets.tatacliq.com/medias/sys_master/images/52084207878174.png);
+display: flex;
+justify-content: center;
+position: relative;
+background-size: cover;
+background-repeat: no-repeat;
+left: 50%;
+top: 35%;
+transform: translate(-50%, -50%);
+}
+#container .swal2-container {
+background-image: url(https://assets.tatacliq.com/medias/sys_master/images/52084207878174.png);
+display: flex;
+justify-content: center;
+background-size: cover;
+background-repeat: no-repeat;
+}
+text {
+font-size: 110%;
+font-weight: 600;
+}
+#chart {
+position: absolute;
+pointer-events: none;
+display: flex;
+flex-direction: column-reverse;
+justify-content: start;
+/* gap: 45px; */
+align-items: center;
+margin: 20px 0 34px;
+}
+
+
+.tagline {
+font-size: 26px;
+color: #FFFFFF;
+display: flex;
+flex-direction: column;
+align-items: center;
+text-align: center;
+}
+.swal2-modal.swal2-popup {
+background-image: url(https://assets.tatacliq.com/medias/sys_master/images/52084207878174.png);
+background-position: center;
+background-size: cover;
+background-repeat: no-repeat;
+}
+.swal2-title {
+color: #FFFFFF;
+font-size: 140%;
+font-weight: 500;
+display: flex !important;
+flex-direction: column;
+gap: 20px;
+padding: .8em 0 0;
+}
+button.swal2-confirm.swal2-styled {
+border: 4px solid #FFFFFF;
+border-radius: 10px;
+}
+.dot {
+position: absolute;
+margin-left: -40px;
+background-color: transparent;
+border-radius: 50%;
+border-color: transparent;
+cursor: pointer;
+}
+.btn {
+height: 30px;
+width: 30px;
+position: absolute;
+right: 4px;
+top: 4px;
+background-color: #ffffff82;
+border-radius: 4px;
+font-size: 15px;
+display: flex;
+align-items: center;
+justify-content: center;
+color: #000;
+}
+.swal2-close {
+height: unset;
+width: unset;
+}
+.swal2-close:hover {
+color: #000;
+background-color: #ffffff82;
+}
+@media screen and (max-width: 350px) {
+.dot {
+margin-top: 107px;
+}
+}
+</style>
+<div id="container">
+<div class="swal2-container">
+<div id="chart">
+<div class="tagline">
+Spin The Wheel
+<span style="font-weight: 700;">Play Now & Unlock Unmissable Offers!</span>
+</div>
+</div>
+<div id="spin2"><input id="dot" type="button" class="dot"></input></div>
+<div class="btn">X</div>
+</div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script type="text/javascript" charset="utf-8">
+var setwidth = 350;
+var setheight = 350;
+if (window.screen.width < 370) {
+setwidth = setheight = window.screen.width - 10;
+}
+
+
+var flag = true;
+function simulateEvent(chances) {
+var sum = 0;
+chances.forEach(function (chance) {
+sum += chance;
+});
+var rand = Math.random();
+var chance = 0;
+for (var i = 0; i < chances.length; i++) {
+chance += chances[i] / sum;
+if (rand < chance) {
+return i;
+}
+}
+return -1;
+}
+var padding = { top: 0, right: 14, bottom: 0, left: 14 },
+w = setwidth - padding.left - padding.right,
+h = setheight - padding.top - padding.bottom,
+r = Math.min(w, h) / 2,
+rotation = 0,
+oldrotation = 90,
+picked = 100000,
+color = d3.scaleOrdinal(d3.schemeCategory10);
+var container = document.getElementById("container");
+var swal2Container = document.querySelector(".swal2-container")
+container.style.height = `${54 + 2 * r + 2 * padding.left + 45 + 70}px`;
+swal2Container.style.height = `${54 + 2 * r + 2 * padding.left + 45 + 70}px`;
+//container.style.backgroundImage = `url(${popupbg})`;
+var svg = d3.select('#chart')
+.append("svg")
+.data([data])
+.attr("width", w + padding.left + padding.right)
+.attr("height", h + padding.top + padding.bottom);
+var container = svg.append("g")
+.attr("class", "chartholder")
+.attr("transform", "translate(" + (w / 2 + padding.left) + "," + (h / 2 + padding.top) + ")");
+var vis = container
+.append("g");
+var pie = d3.pie().sort(null).value(function (d) { return 1; }); // declare an arc generator function
+var arc = d3.arc().innerRadius(0).outerRadius(r); // select paths, use arc generator to draw
+var arcs = vis.selectAll("g.slice")
+.data(pie)
+.enter()
+.append("g")
+.attr("class", "slice");
+arcs.append("path")
+//use below code for auto fill color
+// .attr("fill", function (d, i) { return color(i); })
+//use below code for manually setting color. please set the color in the data list above
+.attr("fill", function (d, i) { return data[i].color; })
+.attr("d", arc)
+arcs.append("text").attr("transform", function (d) {
+d.innerRadius = 30;
+d.outerRadius = r;
+d.angle = (d.startAngle + d.endAngle) / 2;
+return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")translate(" + (d.outerRadius - d.innerRadius) + ",7.5)";
+})
+.attr("text-anchor", "end")
+.style("fill", textcolor)
+.text(function (d, i) {
+return data[i].label;
+});
+function spin(d) {
+let t_in = 0.5;
+var ps = 360 / data.length;
+pieslice = Math.round(1440 / data.length);
+var test = Math.random();
+var likelihoods = data.map(({ probability }) => probability);
+picked = simulateEvent(likelihoods);
+// Adjust rotation calculation for clockwise rotation
+rotation = -((picked - 1) * ps) + 6480;
+console.log(data[picked].label);
+console.log(rotation);
+vis.transition()
+.duration(4000)
+// Change ease function to clockwise rotation
+.ease(d3.easeCircle)
+.attrTween("transform", rotTween)
+.on("end", function () {
+confetti(); // Trigger confetti animation
+});
+//set title text
+titletext = titletext + data[picked].label + " <strong>" + data[picked].discount + "</strong> " + " Valid for Today! ";
+setTimeout(function () {
+var container = document.getElementById("container");
+if (container.style.display === "none") {
+container.style.display = "flex";
+} else {
+container.style.display = "none";
+}
+swal.fire({
+title: titletext,
+confirmButtonText: `<div style='color:${titlecolor};text-align:center;font-size:13px;text-transform:uppercase;font-weight:800'>${confirmbuttontext}</div>`,
+confirmButtonColor: 'transparent',
+backdrop: 'transparent',
+imageUrl: data[picked].imgurll,
+imageWidth: 400,
+imageHeight: 200,
+allowOutsideClick: false,
+showClass: {
+popup: 'animate__animated animate__zoomIn'
+},
+showCloseButton: true,
+closeButtonHtml: '<div class="btn">X</div>',
+didClose: closePopUp,
+customClass: {
+closeButton: 'swalCloseBtn'
+}
+}).then((result) => {
+if (window.CleverTap) {
+CleverTap.pushEvent("SpinWheel", JSON.stringify(data[picked]));
+var data_props = { SpinWheel: data[picked].label, SpinWheel_offer_ULR: data[picked].offerpage };
+CleverTap.pushProfile(JSON.stringify(data_props));
+}
+
+
+if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.clevertap) {
+var message = { action: 'recordEventWithProps', event: 'SpinWheel', properties: data[picked], props: data[picked] };
+window.webkit.messageHandlers.clevertap.postMessage(message);
+var data_props = { SpinWheel: data[picked].label, SpinWheel_offer_ULR: data[picked].offerpage };
+const message2 = { action: 'profilePush', properties: data_props, props: data_props };
+window.webkit.messageHandlers.clevertap.postMessage(message2);
+}
+if (result.isConfirmed) { window.location.replace(data[picked].offerpage); }
+//}
+})
+}, 5000);
+}
+svg.append("g")
+.attr("transform", "translate(" + (w + padding.right) + "," + ((h / 2) + padding.top) + ")")
+.append("path")
+.attr("d", "M-" + (r * .15) + ",0L0," + (r * .05) + "L0,-" + (r * .05) + "Z")
+.attr("fill", "white")
+container.append("circle")
+.attr("cx", 0)
+.attr("cy", 0)
+.attr("r", r * (8 / 35))
+.attr("fill", spinbgcolor);
+container.append("text")
+.attr("x", 0)
+.attr("y", 10)
+.attr("text-anchor", "middle")
+.text("SPIN")
+.style("font-weight", "600")
+.style("font-size", "175%")
+.style("fill", titlecolor);
+var dot = document.getElementById("dot");
+dot.style.height = `${r * (16 / 35)}px`;
+dot.style.width = `${r * (16 / 35)}px`;
+dot.style.marginTop = `${r - 6}px`;
+document.getElementById("spin2").addEventListener("click", function () {
+spin();
+document.getElementById("spin2").style.pointerEvents = "none";
+});
+function rotTween(to) {
+var i = d3.interpolate(oldrotation % 360, rotation);
+return function (t) {
+return "rotate(" + i(t) + ")";
+};
+}
+var btns = document.querySelectorAll('.btn');
+btns.forEach(btn => { btn.addEventListener('click', closePopUp); });
+function closePopUp() {
+if (window.CleverTap) {
+CleverTap.dismissInAppNotification();
+}
+else {
+//document.location.href = "wzrk://thisleadstonowhere";
+window.location.href = "wzrk://thisleads";
+
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reco Tray</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: "Inter", sans-serif;
+        box-sizing: border-box;
+      }
+
+      .popup {
+        background: #141425;
+        overflow: hidden;
+        width: 100%;
+        max-width: 700px;
+        text-align: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        padding-bottom: 44px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        margin: 0 auto;
+        border-radius: 12px 12px 0 0;
+      }
+
+      .popup-close {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(0, 0, 0, 0.5);
+        border: none;
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        z-index: 2;
+      }
+
+      .pop-up-image {
+        position: relative;
+        width: 100%;
+        height: 200px;
+      }
+
+      .pop-up-image::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          180deg,
+          rgba(20, 20, 37, 0) 57%,
+          #141425 100%
+        );
+      }
+
+      .pop-up-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 12px 12px 0 0;
+      }
+
+      .container {
+        display: block;
+        width: 100%;
+      }
+
+      .quiz-container {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px 0;
+        width: 100%;
+      }
+
+      .quiz-question h2 {
+        color: #acacac;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 22px;
+      }
+
+      .quiz-question span {
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 24px;
+      }
+
+      .button-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 0 16px;
+        margin-top: 16px;
+      }
+
+      .button-container button {
+        height: 40px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        gap: 8px;
+        color: #07070a;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #636370;
+        cursor: pointer;
+      }
+
+      .button-container button.black {
+        background: rgba(0, 0, 0, 0.4);
+        color: white;
+      }
+
+      .answer-container {
+        display: none;
+        flex-direction: column;
+        padding-bottom: 16px;
+        width: 100%;
+      }
+
+      .trailer-container {
+        position: relative;
+        width: 100%;
+        height: 220px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+      }
+
+      .video-container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: -1px;
+        object-fit: cover;
+      }
+
+      .trailer-container::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          180deg,
+          rgba(20, 20, 37, 0) 0%,
+          rgba(20, 20, 37, 0.25) 55%,
+          rgba(20, 20, 37, 0.85) 70%,
+          #141425 100%
+        );
+      }
+
+      .recommended {
+        z-index: 9;
+        margin-bottom: 20px;
+      }
+
+      .recommended p {
+        font-size: 14px;
+        color: #acacac;
+      }
+
+      .recommended h3 {
+        font-size: 16px;
+        line-height: 24px;
+        color: white;
+      }
+
+      .carousel-container {
+        overflow-x: auto;
+        display: flex;
+        gap: 12px;
+        padding: 0 16px;
+      }
+
+      .carousel-item {
+        width: 104px;
+        height: 140px;
+        flex-shrink: 0;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        border: 1px solid transparent;
+      }
+
+      .carousel-item.active {
+        border-color: #fff;
+      }
+
+      .carousel-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .button-container button:disabled {
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.2);
+        color: #636370;
+        border-color: #636370;
+        cursor: not-allowed;
+      }
+      .mute-toggle {
+        position: absolute;
+        top: 134px;
+        right: 16px;
+        background: rgba(0, 0, 0, 0.4);
+        border: none;
+        border-radius: 50%;
+        padding: 6px;
+        cursor: pointer;
+        z-index: 10;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .mute-toggle svg {
+        display: block;
+      }
+      .trailer-tag {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        font-size: 10px;
+        line-height: 12px;
+        font-weight: 500;
+        padding: 6px 8px;
+        border-radius: 4px;
+        z-index: 10;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="popup-overlay" id="popupOverlay">
+      <div class="popup">
+        <button class="popup-close" id="popupClose">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M15.5304 5.53082C15.8232 5.23793 15.8232 4.76305 15.5304 4.47016C15.2375 4.17726 14.7626 4.17726 14.4697 4.47016L10 8.93984L5.53033 4.47016C5.23744 4.17727 4.76256 4.17727 4.46967 4.47016C4.17678 4.76305 4.17678 5.23793 4.46967 5.53082L8.93935 10.0005L4.46969 14.4702C4.1768 14.7631 4.1768 15.2379 4.46969 15.5308C4.76258 15.8237 5.23746 15.8237 5.53035 15.5308L10 11.0612L14.4697 15.5308C14.7626 15.8237 15.2374 15.8237 15.5303 15.5308C15.8232 15.2379 15.8232 14.7631 15.5303 14.4702L11.0607 10.0005L15.5304 5.53082Z"
+              fill="white"
+            />
+          </svg>
+        </button>
+
+        <!-- Initial View -->
+        <div class="container" id="initialContainer">
+          <div class="pop-up-image">
+            <img src="https://files.catbox.moe/m79wc8.jpg" alt="Popup Image" />
+          </div>
+          <div class="quiz-container">
+            <div class="quiz-question">
+              <h2>Have you watched <span>Batman?</span></h2>
+            </div>
+            <div class="button-container">
+              <button onclick="handleYesClick()">YES Thanks! 🤩</button>
+              <button class="black" onclick="handleNoClick()">
+                No, not yet 🫢
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reco-tray -->
+        <div class="answer-container" id="answerContainer">
+          <div class="trailer-container">
+            <div class="trailer-tag">Trailer</div>
+            <button
+              class="mute-toggle"
+              id="muteToggle"
+              aria-label="Toggle Mute"
+            >
+              <span id="muteIcon"></span>
+            </button>
+            <video
+              id="seasonTrailer"
+              class="video-container"
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="auto"
+            ></video>
+            <div class="recommended">
+              <h3 id="recommendedText">YES! 🤩</h3>
+              <p id="recommendedSubText">Batman streaming soon!</p>
+            </div>
+          </div>
+
+          <div class="carousel-container" id="carouselContainer"></div>
+          <div class="button-container">
+            <button id="ctaButton" class="reminder-btn">Set Reminder</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const trailers = {
+        S1: "https://pradeep-innovates.github.io/image-host/1000228886%20(online-video-cutter.com).mp4",
+        S2: "https://pradeep-innovates.github.io/image-host/1000228886%20(online-video-cutter.com).mp4",
+        S3: "https://pradeep-innovates.github.io/image-host/1000228886%20(online-video-cutter.com).mp4",
+        S4: "https://pradeep-innovates.github.io/image-host/1000228886%20(online-video-cutter.com).mp4",
+      };
+
+      const ctas = {
+        S1: {
+          text: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M15.571 8.7843C16.4763 9.36263 16.4763 10.6374 15.571 11.2157L6.12077 17.2522C5.10739 17.8995 3.75 17.2034 3.75 16.0365L3.75 3.96354C3.75 2.79658 5.10739 2.10053 6.12077 2.74785L15.571 8.7843Z" fill="#07070A"/>
+</svg>
+Watch The Batman`,
+          url: "https://youtu.be/pebnDtg8eho?feature=shared",
+        },
+        S2: {
+          text: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M15.571 8.7843C16.4763 9.36263 16.4763 10.6374 15.571 11.2157L6.12077 17.2522C5.10739 17.8995 3.75 17.2034 3.75 16.0365L3.75 3.96354C3.75 2.79658 5.10739 2.10053 6.12077 2.74785L15.571 8.7843Z" fill="#07070A"/>
+</svg> Watch Batman Begins`,
+          url: "https://youtu.be/pebnDtg8eho?feature=shared",
+        },
+        S3: {
+          text: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M15.571 8.7843C16.4763 9.36263 16.4763 10.6374 15.571 11.2157L6.12077 17.2522C5.10739 17.8995 3.75 17.2034 3.75 16.0365L3.75 3.96354C3.75 2.79658 5.10739 2.10053 6.12077 2.74785L15.571 8.7843Z" fill="#07070A"/>
+</svg> Watch The Dark Knight`,
+          url: "https://youtu.be/pebnDtg8eho?feature=shared",
+        },
+        S4: {
+          text: `
+<svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M5.45905 7.37545C5.45905 4.68281 7.71596 2.5 10.5 2.5C13.284 2.5 15.541 4.68281 15.541 7.37545V9.13704C15.5549 9.35549 15.5666 9.55377 15.5773 9.73562C15.6022 10.1577 15.6218 10.4911 15.6529 10.7825C15.6966 11.1919 15.7571 11.4424 15.8518 11.6455C16.0442 12.0576 16.4403 12.4276 17.7049 13.3449C17.9589 13.5292 18.0625 13.85 17.9621 14.1413C17.8617 14.4327 17.5798 14.6292 17.2623 14.6292L3.73775 14.6292C3.42022 14.6292 3.13832 14.4327 3.0379 14.1413C2.93749 13.85 3.0411 13.5292 3.29513 13.3449C4.55969 12.4276 4.95581 12.0576 5.14816 11.6455C5.24293 11.4424 5.30336 11.1919 5.34707 10.7825C5.37819 10.4911 5.39783 10.1577 5.42268 9.73564C5.43339 9.55379 5.44507 9.3555 5.45905 9.13704V7.37545ZM10.5 3.92696C8.5308 3.92696 6.93445 5.4709 6.93445 7.37545V9.15915C6.93445 9.17393 6.93397 9.1887 6.93303 9.20345C6.9201 9.40448 6.90882 9.59585 6.89811 9.7775C6.87208 10.2193 6.84944 10.6035 6.81467 10.9291C6.76432 11.4006 6.68253 11.8263 6.49288 12.2326C6.32856 12.5846 6.0947 12.8937 5.784 13.2022L15.216 13.2022C14.9053 12.8937 14.6714 12.5846 14.5071 12.2326C14.3175 11.8263 14.2357 11.4006 14.1853 10.9291C14.1506 10.6035 14.1279 10.2193 14.1019 9.77749C14.0912 9.59585 14.0799 9.40448 14.067 9.20345C14.066 9.1887 14.0655 9.17393 14.0655 9.15915V7.37545C14.0655 5.4709 12.4692 3.92696 10.5 3.92696ZM8.74887 15.7895C9.03696 15.5108 9.50404 15.5108 9.79213 15.7895C10.1831 16.1676 10.8169 16.1676 11.2079 15.7895C11.496 15.5108 11.963 15.5108 12.2511 15.7895C12.5392 16.0681 12.5392 16.5198 12.2511 16.7985C11.284 17.7338 9.71599 17.7338 8.74887 16.7985C8.46078 16.5198 8.46078 16.0681 8.74887 15.7895Z" fill="#07070A"/>
+</svg> Set Reminder `,
+          url: "https://youtu.be/pebnDtg8eho?feature=shared",
+        },
+      };
+
+      const thumbnails = {
+        S1: "https://files.catbox.moe/2r9se7.jpg",
+        S2: "https://files.catbox.moe/rs25ci.jpg",
+        S3: "https://files.catbox.moe/ev53kk.jpg",
+        S4: "https://files.catbox.moe/rxbttc.jpg",
+      };
+
+      let currentSet = [];
+      let reminderStatus = { S4: false };
+
+      const userResponseProps = {
+        CP_ID: '{{ Profile.Identity | default: "NO ID" }}',
+        campaign_id: '{{ Campaign.campaignId | default: "0_0" }}',
+        segment_name: '{{ Profile.EXP_SEGMENT | default: "No segment" }}',
+        campaign_name: "SVODLapser_Exp7_April",
+        campaign_subname: "Batman have you watched",
+      };
+
+      function trackEvent(eventName, additionalProps = {}) {
+        const props = {
+          event_type: eventName,
+          ...userResponseProps,
+          ...additionalProps,
+        };
+        console.log("[TrackEvent]", props);
+        console.log("CLICKED", eventName);
+        if (window.CleverTap) {
+          CleverTap.pushEvent("custom_html_click", JSON.stringify(props));
+        }
+
+        const message = {
+          action: "recordEventWithProps",
+          event: "custom_html_click",
+          properties: props,
+          props: props,
+        };
+
+        if (window.webkit?.messageHandlers?.clevertap) {
+          window.webkit.messageHandlers.clevertap.postMessage(message);
+        }
+      }
+
+      function handleYesClick() {
+        currentSet = ["S4", "S3", "S2", "S1"];
+        document.getElementById("initialContainer").style.display = "none";
+        document.getElementById("answerContainer").style.display = "flex";
+
+        const trailerEl = document.getElementById("seasonTrailer");
+        trailerEl.src = trailers["S4"];
+        trailerEl.load();
+        trailerEl.play();
+
+        document.querySelector(".trailer-tag").innerText = "Batman Trailer";
+
+        renderCarousel("S4");
+
+        // Set Reminder CTA logic
+        const ctaBtn = document.getElementById("ctaButton");
+        ctaBtn.innerHTML = ctas["S4"].text;
+        ctaBtn.disabled = false;
+        ctaBtn.style.cursor = "pointer";
+
+        const newBtn = ctaBtn.cloneNode(true);
+        ctaBtn.parentNode.replaceChild(newBtn, ctaBtn);
+        newBtn.addEventListener("click", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.innerHTML = `
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M13.7834 4.27932C14.0951 4.62569 14.067 5.15918 13.7207 5.47091L6.84569 11.6584C6.51062 11.96 5.9977 11.9449 5.68093 11.6242L2.24343 8.14369C1.91598 7.81215 1.9193 7.27792 2.25085 6.95047C2.58239 6.62302 3.11661 6.62634 3.44406 6.95788L6.31553 9.86525L12.5918 4.2166C12.9382 3.90487 13.4717 3.93295 13.7834 4.27932Z" fill="#636370"/>
+</svg>
+
+Reminder Set
+`;
+          this.disabled = true;
+          this.style.cursor = "not-allowed";
+          reminderStatus["S4"] = true;
+          handleCtaClick("S4");
+        });
+
+        document.getElementById("recommendedText").innerText = "YES! 🤩";
+        document.getElementById("recommendedSubText").innerText =
+          "Batman streaming soon!";
+        trackEvent("answered_yes", { user_answer: "yes" });
+      }
+
+      function handleNoClick() {
+        currentSet = ["S1", "S2", "S3"];
+        document.getElementById("initialContainer").style.display = "none";
+        document.getElementById("answerContainer").style.display = "flex";
+
+        const trailerEl = document.getElementById("seasonTrailer");
+        trailerEl.src = trailers["S1"];
+        trailerEl.load();
+        trailerEl.play();
+
+        document.querySelector(".trailer-tag").innerText = "Batman Trailer";
+
+        renderCarousel("S1");
+
+        const ctaBtn = document.getElementById("ctaButton");
+        ctaBtn.innerHTML = ctas["S1"].text;
+        ctaBtn.disabled = false;
+        ctaBtn.style.cursor = "pointer";
+
+        const newBtn = ctaBtn.cloneNode(true);
+        ctaBtn.parentNode.replaceChild(newBtn, ctaBtn);
+        newBtn.addEventListener("click", () => {
+          handleCtaClick("S1");
+          window.location.href = ctas["S1"].url;
+        });
+
+        document.getElementById("recommendedText").innerText = "No, not yet 🫢";
+        document.getElementById("recommendedSubText").innerText =
+          "Watch how Batman saves Gotham!";
+        trackEvent("answered_no", { user_answer: "no" });
+      }
+
+      function handleCtaClick(season) {
+        const isReminder = season === "S4";
+        const label = isReminder
+          ? "Set Reminder"
+          : ctas[season].text.replace(/<[^>]+>/g, "").trim();
+        trackEvent("cta_click", {
+          season: season,
+          cta_label: label,
+        });
+        // const isReminder1 = season === "S3";
+        // const label1 = isReminder1
+        // ? "Watch S3E1"
+        // : ctas[season].text.replace(/<[^>]+>/g, "").trim();
+        // trackEvent("cta_click", {
+        // season: season,
+        // cta_label: label1,
+        // });
+      }
+
+      function showRecoTray(selected, seasonSet) {
+        currentSet = seasonSet;
+        document.getElementById("initialContainer").style.display = "none";
+        document.getElementById("answerContainer").style.display = "flex";
+        updateRecoTray(selected);
+      }
+
+      function updateRecoTray(season) {
+        const trailerEl = document.getElementById("seasonTrailer");
+        trailerEl.src = trailers[season];
+        trailerEl.load();
+        trailerEl.play();
+
+        const ctaBtn = document.getElementById("ctaButton");
+
+        // If it's S4 (reminder), do not redirect — set up the “Reminder Set” logic
+        // Reset button styles and states
+        ctaBtn.disabled = false;
+        ctaBtn.style.cursor = "pointer";
+        ctaBtn.classList.remove("reminder-set");
+
+        // Clear previous event listeners
+        const newBtn = ctaBtn.cloneNode(true);
+        ctaBtn.parentNode.replaceChild(newBtn, ctaBtn);
+
+        if (season === "S4" && reminderStatus["S4"]) {
+          newBtn.innerHTML = `
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M13.7834 4.27932C14.0951 4.62569 14.067 5.15918 13.7207 5.47091L6.84569 11.6584C6.51062 11.96 5.9977 11.9449 5.68093 11.6242L2.24343 8.14369C1.91598 7.81215 1.9193 7.27792 2.25085 6.95047C2.58239 6.62302 3.11661 6.62634 3.44406 6.95788L6.31553 9.86525L12.5918 4.2166C12.9382 3.90487 13.4717 3.93295 13.7834 4.27932Z" fill="#636370"/>
+</svg>
+Reminder Set
+`;
+          newBtn.disabled = true;
+          newBtn.style.cursor = "not-allowed";
+        } else if (season === "S4") {
+          newBtn.innerHTML = ctas[season].text;
+          newBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.innerHTML = `
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M13.7834 4.27932..." fill="#636370"/>
+</svg>
+Reminder Set
+`;
+            this.disabled = true;
+            this.style.cursor = "not-allowed";
+            reminderStatus["S4"] = true;
+            handleCtaClick("S4");
+          });
+        } else {
+          newBtn.innerHTML = ctas[season].text;
+          newBtn.addEventListener("click", () => {
+            handleCtaClick(season);
+            window.location.href = ctas[season].url;
+          });
+        }
+
+        renderCarousel(season);
+      }
+
+      function renderCarousel(activeSeason) {
+        const carousel = document.getElementById("carouselContainer");
+        carousel.innerHTML = "";
+
+        currentSet.forEach((season) => {
+          const item = document.createElement("div");
+          item.classList.add("carousel-item");
+          if (season === activeSeason) item.classList.add("active");
+
+          const img = document.createElement("img");
+          img.src = thumbnails[season];
+          img.alt = season;
+          item.appendChild(img);
+
+          item.onclick = () => {
+            // Update active class only
+            document
+              .querySelectorAll(".carousel-item")
+              .forEach((el) => el.classList.remove("active"));
+            item.classList.add("active");
+
+            // Update CTA button only, don't reload video
+            const ctaBtn = document.getElementById("ctaButton");
+            const newBtn = ctaBtn.cloneNode(true);
+            ctaBtn.parentNode.replaceChild(newBtn, ctaBtn);
+            newBtn.disabled = false;
+            newBtn.style.cursor = "pointer";
+
+            if (season === "S4" && reminderStatus["S4"]) {
+              newBtn.innerHTML = `
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M13.7834 4.27932C14.0951 4.62569 14.067 5.15918 13.7207 5.47091L6.84569 11.6584C6.51062 11.96 5.9977 11.9449 5.68093 11.6242L2.24343 8.14369C1.91598 7.81215 1.9193 7.27792 2.25085 6.95047C2.58239 6.62302 3.11661 6.62634 3.44406 6.95788L6.31553 9.86525L12.5918 4.2166C12.9382 3.90487 13.4717 3.93295 13.7834 4.27932Z" fill="#636370"/>
+</svg>
+Reminder Set
+`;
+              newBtn.disabled = true;
+              newBtn.style.cursor = "not-allowed";
+            } else if (season === "S4") {
+              newBtn.innerHTML = ctas["S4"].text;
+              newBtn.addEventListener("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.innerHTML = `
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M13.7834 4.27932C14.0951 4.62569 14.067 5.15918 13.7207 5.47091L6.84569 11.6584C6.51062 11.96 5.9977 11.9449 5.68093 11.6242L2.24343 8.14369C1.91598 7.81215 1.9193 7.27792 2.25085 6.95047C2.58239 6.62302 3.11661 6.62634 3.44406 6.95788L6.31553 9.86525L12.5918 4.2166C12.9382 3.90487 13.4717 3.93295 13.7834 4.27932Z" fill="#636370"/>
+</svg>
+Reminder Set
+`;
+                this.disabled = true;
+                this.style.cursor = "not-allowed";
+                reminderStatus["S4"] = true;
+                handleCtaClick("S4");
+              });
+            } else {
+              newBtn.innerHTML = ctas[season].text;
+              newBtn.addEventListener("click", () => {
+                handleCtaClick(season);
+                window.location.href = ctas[season].url;
+              });
+            }
+          };
+
+          carousel.appendChild(item);
+        });
+      }
+
+      const muteBtn = document.getElementById("muteToggle");
+      const muteIcon = document.getElementById("muteIcon");
+      const video = document.getElementById("seasonTrailer");
+
+      const svgMuted = `
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M6.62039 2.83959C7.25466 1.9939 8.60039 2.44248 8.60039 3.49959V12.4996C8.60039 13.5567 7.25466 14.0053 6.62039 13.1596L4.70039 10.5996H2.50039C1.89288 10.5996 1.40039 10.1071 1.40039 9.49959V6.49959C1.40039 5.89208 1.89288 5.39959 2.50039 5.39959H4.70039L6.62039 2.83959ZM7.40039 3.79959L5.63039 6.15959C5.42265 6.43658 5.09662 6.59959 4.75039 6.59959H2.60039V9.39959H4.75039C5.09662 9.39959 5.42265 9.56261 5.63039 9.83959L7.40039 12.1996V3.79959Z" fill="white"/>
+<path d="M10.5761 6.07533C10.8104 5.84102 11.1903 5.84102 11.4247 6.07533L12.5004 7.15107L13.5761 6.07535C13.8104 5.84103 14.1903 5.84103 14.4247 6.07535C14.659 6.30966 14.659 6.68956 14.4247 6.92387L13.3489 7.9996L14.4247 9.07533C14.659 9.30965 14.659 9.68955 14.4247 9.92386C14.1903 10.1582 13.8104 10.1582 13.5761 9.92386L12.5004 8.84813L11.4247 9.92387C11.1903 10.1582 10.8104 10.1582 10.5761 9.92387C10.3418 9.68956 10.3418 9.30966 10.5761 9.07535L11.6519 7.9996L10.5761 6.92386C10.3418 6.68955 10.3418 6.30965 10.5761 6.07533Z" fill="white"/>
+</svg>`;
+
+      const svgUnmuted = `
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M6.62039 2.83959C7.25466 1.9939 8.60039 2.44248 8.60039 3.49959V12.4996C8.60039 13.5567 7.25466 14.0053 6.62039 13.1596L4.70039 10.5996H2.50039C1.89288 10.5996 1.40039 10.1071 1.40039 9.49959V6.49959C1.40039 5.89208 1.89288 5.39959 2.50039 5.39959H4.70039L6.62039 2.83959ZM7.40039 3.79959L5.63039 6.15959C5.42265 6.43658 5.09662 6.59959 4.75039 6.59959H2.60039V9.39959H4.75039C5.09662 9.39959 5.42265 9.56261 5.63039 9.83959L7.40039 12.1996V3.79959Z" fill="white"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.0725 3.55251C12.3194 3.33152 12.6987 3.35253 12.9197 3.59945C13.9644 4.76671 14.6004 6.30959 14.6004 7.99958C14.6004 9.68957 13.9644 11.2325 12.9197 12.3997C12.6987 12.6466 12.3194 12.6677 12.0725 12.4467C11.8255 12.2257 11.8045 11.8463 12.0255 11.5994C12.881 10.6437 13.4004 9.383 13.4004 7.99958C13.4004 6.61617 12.881 5.3555 12.0255 4.39974C11.8045 4.15282 11.8255 3.77351 12.0725 3.55251Z" fill="white"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M10.0859 4.83273C10.3254 4.6038 10.7052 4.61243 10.9342 4.852C11.7549 5.7109 12.2637 6.79924 12.2637 7.9996C12.2637 9.19997 11.7549 10.2883 10.9342 11.1472C10.7052 11.3868 10.3254 11.3954 10.0859 11.1665C9.84629 10.9375 9.83767 10.5577 10.0666 10.3182C10.7084 9.64659 11.0637 8.84475 11.0637 7.9996C11.0637 7.15446 10.7084 6.35262 10.0666 5.68104C9.83767 5.44147 9.84629 5.06167 10.0859 4.83273Z" fill="white"/>
+</svg>
+
+`;
+
+      function updateMuteIcon() {
+        muteIcon.innerHTML = video.muted ? svgMuted : svgUnmuted;
+      }
+
+      // Initial icon render
+      updateMuteIcon();
+
+      // Toggle logic
+      muteBtn.addEventListener("click", () => {
+        video.muted = !video.muted;
+        updateMuteIcon();
+      });
+
+      // Close popup functionality
+      document.getElementById("popupClose").addEventListener("click", () => {
+        var props = {
+          event_type: "in_app_closed",
+          CP_ID: '{{ Profile.Identity | default: "NO ID" }}',
+          campaign_id: '{{ Campaign.campaignId | default: "0_0" }}',
+          segment_name: '{{ Profile.EXP_SEGMENT | default: "No segment" }}',
+          campaign_name: "SVODLapser_Exp7_April",
+          campaign_subname: "Maharani S4 have you watched",
+        };
+
+        if (
+          window.CleverTap &&
+          typeof CleverTap.dismissInAppNotification === "function"
+        ) {
+          CleverTap.dismissInAppNotification(); // Android dismiss
+          CleverTap.pushEvent("custom_html_click", JSON.stringify(props)); // Track event for Android
+        } else {
+          var message = {
+            action: "recordEventWithProps",
+            event: "custom_html_click",
+            properties: props,
+            props: props,
+          };
+          if (
+            window.webkit &&
+            window.webkit.messageHandlers &&
+            window.webkit.messageHandlers.clevertap
+          ) {
+            window.webkit.messageHandlers.clevertap.postMessage(message);
+          }
+          window.location.href = "wzrk://thisleadstonowhere"; // iOS dismiss
+        }
+
+        // Hide the popup
+        document.getElementById("popupOverlay").style.display = "none";
+      });
+    </script>
+  </body>
+</html>

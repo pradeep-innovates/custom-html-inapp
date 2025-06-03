@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>COPON CODE</title>
+    <link
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style type="text/css">
+      .container {
+        border-radius: 15px;
+        position: block;
+        width: auto;
+        height: auto;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: none;
+        margin: auto;
+        user-select: none;
+        background-color: rgb(253, 241, 241);
+        border: 2px solid rgb(184, 4, 4);
+      }
+
+      body {
+        display: absolute;
+        background-color: transparent;
+        margin: auto;
+        position: relative;
+      }
+      img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100px;
+        height: 100px;
+      }
+      h3,
+      h2,
+      h1 {
+        text-align: center;
+        padding-left: 10px;
+        padding-right: 10px;
+        text-align: center;
+        color: #ff4d4d;
+        font-family: Georgia, "Times New Roman", Times, serif;
+      }
+
+      .couponcode {
+        text-align: center;
+        color: yellow;
+        margin: auto;
+        font-size: 25px;
+        border-radius: 25px;
+        background: #e47e00;
+
+        height: 30px;
+        width: 150px;
+      }
+      @media screen and (max-width: 350px) {
+        h2 {
+          font-size: 20px;
+        }
+        h4 {
+          font-size: 16px;
+        }
+        .couponcode {
+          font-size: 20px;
+          justify-content: center;
+          height: 20px;
+          padding-bottom: 10px;
+          width: 125px;
+        }
+        img {
+          border-radius: 15px;
+          height: 110px;
+          width: 120px;
+        }
+      }
+    </style>
+  </head>
+  <body onload="">
+    <div class="container" id="js-container">
+      <br />
+      <img
+        id="pimg"
+        name="test"
+        src="https://media.tenor.com/WmAphk4KDDcAAAAd/tatacliqpalette-personalisedbeauty.gif"
+      />
+      <h3 id="label">
+        Special Offer Just for @Profile - Name | default: " you " !
+      </h3>
+      <h1>
+        <strong><b>NEW50</b></strong>
+      </h1>
+      <div style="text-align: center; margin-top: 10px">
+        <button
+          onClick="closebtn()"
+          style="
+            border: 2px solid rgb(184, 4, 4);
+            width: 100px;
+            height: 40px;
+            text-align: center;
+            margin-right: 5px;
+            border-radius: 5px;
+            background-color: #ff4d4d;
+            color: white;
+            font-size: 16px;
+          "
+        >
+          <b>SKIP</b>
+        </button>
+        <button
+          onClick="copyclip()"
+          style="
+            border: 2px solid rgb(184, 4, 4);
+            width: 100px;
+            height: 40px;
+            text-align: center;
+            border-radius: 5px;
+            background-color: #ff4d4d;
+            color: white;
+            font-size: 16px;
+          "
+        >
+          <b>COPY</b>
+        </button>
+      </div>
+      <br />
+    </div>
+    <script type="text/javascript" charset="utf-8">
+      function copyclip() {
+        const elem = document.createElement("textarea");
+        elem.value = "NEW50";
+        document.body.appendChild(elem);
+        elem.select();
+        document.execCommand("copy");
+        document.body.removeChild(elem);
+        closebtn();
+      }
+      function closebtn() {
+        document.location.href = "wzrk://thisleadstonowhere";
+      }
+    </script>
+  </body>
+</html>
