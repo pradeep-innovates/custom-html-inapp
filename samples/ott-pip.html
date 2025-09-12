@@ -1,311 +1,329 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Draggable Video</title>
+    <title>OTT PIP</title>
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-      body {
-        background: transparent;
-        color: #fff;
-        height: 100vh;
-        overflow: hidden;
-      }
+        body {
+            background: transparent;
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-      .video-container {
-        position: fixed;
-        bottom: 20px;
-        width: 84%;
-        height: 25%;
-        border: 2px solid rgba(255, 255, 255, 0.5);
-        border-radius: 10px;
-        overflow: hidden;
-        background: rgba(0, 0, 0, 0.8);
-        touch-action: none; /* Prevent touch interference for drag */
-      }
+        .video-container {
+            position: fixed;
+            bottom: 0px;
+            width: 100%;
+            height: 25%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.8);
+            touch-action: none;
+            /* Prevent touch interference for drag */
+        }
 
-      video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
+        a.cta-btn {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #000;
+            text-decoration: none;
+            font-size: 19px;
+            background: red;
+            width: 120px;
+            margin: 0 auto;
+            color: #fff;
+            border-radius: 5px;
+            padding: 10px;
+        }
 
-      .mute-btn,
-      .new-btn {
-        position: absolute;
-        background: rgba(255, 255, 255, 0.3);
-        padding: 5px;
-        border: none;
-        cursor: pointer;
-        border-radius: 100px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-      #close-image {
-        height: 17px;
-        width: 17px;
-      }
+        .mute-btn,
+        .new-btn {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 5px;
+            border: none;
+            cursor: pointer;
+            border-radius: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-      .mute-btn {
-        top: 10px;
-        left: 10px;
-      }
+        #close-image {
+            height: 17px;
+            width: 17px;
+        }
 
-      .new-btn {
-        top: 10px;
-        right: 10px;
-      }
+        .mute-btn {
+            top: 10px;
+            left: 10px;
+        }
 
-      .mute-btn img,
-      .new-btn img {
-        width: 20px;
-        height: 20px;
-      }
+        .new-btn {
+            top: 10px;
+            right: 10px;
+        }
+
+        .mute-btn img,
+        .new-btn img {
+            width: 20px;
+            height: 20px;
+        }
     </style>
-  </head>
+</head>
 
-  <body>
+<body>
     <div class="video-container" id="video-container">
-      <video id="video" autoplay muted loop playsinline disablePictureInPicture>
-        <source src="https://files.catbox.moe/k5n1v3.mp4" type="video/mp4" />
-        Your browser does not support HTML5 video.
-      </video>
-      <button id="mute-btn" class="mute-btn">
-        <img
-          id="mute-icon"
-          src="https://cdn-icons-png.flaticon.com/512/5949/5949045.png"
-          alt="Mute"
-        />
-      </button>
-      <button id="new-btn" class="new-btn" onclick="close_btn()">
-        <img
-          id="close-image"
-          src="https://cdn-icons-png.flaticon.com/512/665/665304.png"
-          alt="Close"
-        />
-      </button>
+        <video id="video" autoplay muted loop playsinline disablePictureInPicture>
+            <source
+                src="https://videos.ctfassets.net/69qx72t49ip2/tgOKj5cHC4AH3mxloyAax/4d35baeecd59b9c79e3c5e42d3d78312/1_J-24_KCP_BZero1_Product_Animation03_1080x1920_1.mp4"
+                type="video/mp4" />
+            Your browser does not support HTML5 video.
+        </video>
+        <button id="mute-btn" class="mute-btn">
+            <img id="mute-icon" src="https://cdn-icons-png.flaticon.com/512/5949/5949045.png" alt="Mute" />
+        </button>
+        <button id="new-btn" class="new-btn" onclick="close_btn()">
+            <img id="close-image" src="https://cdn-icons-png.flaticon.com/512/665/665304.png" alt="Close" />
+        </button>
+
     </div>
+
     <script>
-      const video = document.getElementById("video");
-      const muteBtn = document.getElementById("mute-btn");
-      const muteIcon = document.getElementById("mute-icon");
-      const videoContainer = document.getElementById("video-container");
+        const video = document.getElementById("video");
+        const muteBtn = document.getElementById("mute-btn");
+        const muteIcon = document.getElementById("mute-icon");
+        const videoContainer = document.getElementById("video-container");
 
-      // URLs for redirection
-      const androidUrl =
-        "https://www.sonyliv.com/trailer/shark-tank-india-trailer-3-1090427137?watch=true";
-      const iosUrl =
-        "Yhttps://www.sonyliv.com/trailer/shark-tank-india-trailer-3-1090427137?watch=true";
+        // URLs for redirection
+        const androidUrl = "https://google.com/";
+        const iosUrl = "https://google.com/";
 
-      const muteImage =
-        "https://cdn-icons-png.flaticon.com/512/5949/5949045.png";
-      const unmuteImage =
-        "https://cdn-icons-png.flaticon.com/512/1705/1705050.png";
-      let isMuted = true;
+        const muteImage =
+            "https://cdn-icons-png.flaticon.com/512/5949/5949045.png";
+        const unmuteImage =
+            "https://cdn-icons-png.flaticon.com/512/1705/1705050.png";
+        let isMuted = true;
 
-      // Mute/unmute logic
-      muteBtn.addEventListener("click", () => {
-        isMuted = !isMuted;
-        video.muted = isMuted;
-        muteIcon.src = isMuted ? muteImage : unmuteImage;
+        // Mute/unmute logic
+        muteBtn.addEventListener("click", () => {
+            isMuted = !isMuted;
+            video.muted = isMuted;
+            muteIcon.src = isMuted ? muteImage : unmuteImage;
 
-        // Call Android interface
-        var android_props = { C2A: "umute" };
-        if (window.CleverTap) {
-          CleverTap.pushEvent("inapp_action", JSON.stringify(android_props));
-        } else {
-          //call ios interface
-          var ios_props = { C2A: "umute" };
-          var message = {
-            action: "recordEventWithProps",
-            event: "inapp_action",
-            properties: ios_props,
-          };
-          if (
-            window.webkit &&
-            window.webkit.messageHandlers &&
-            window.webkit.messageHandlers.clevertap
-          ) {
-            window.webkit.messageHandlers.clevertap.postMessage(message);
-          }
-        }
-      });
-
-      // Ensure the video starts playing
-      video.play().catch((error) => {
-        console.error("Autoplay failed:", error);
-      });
-
-      // Detect platform and redirect on video click
-      video.addEventListener("click", () => {
-        const userAgent =
-          navigator.userAgent || navigator.vendor || window.opera;
-
-        // Check if user is on Android
-        if (window.CleverTap) {
-          window.location.href = androidUrl;
-        } else {
-          // For IOS
-          window.location.href = iosUrl;
-        }
-      });
-
-      // Function to handle close
-      function close_btn() {
-        console.log("Close button triggered");
-        if (window.CleverTap) {
-          var android_props = { C2A: "close" };
-          CleverTap.pushEvent("inapp_action", JSON.stringify(android_props));
-          CleverTap.dismissInAppNotification();
-        } else {
-          //call ios interface
-          var ios_props = { C2A: "close" };
-          var message = {
-            action: "recordEventWithProps",
-            event: "inapp_action",
-            properties: ios_props,
-          };
-          if (
-            window.webkit &&
-            window.webkit.messageHandlers &&
-            window.webkit.messageHandlers.clevertap
-          ) {
-            window.webkit.messageHandlers.clevertap.postMessage(message);
-          }
-          const messageData = {
-            action: "triggerInAppAction",
-            actionJson: {
-              type: "close",
-              text: "",
-              android: "",
-              ios: "",
-              kv: {},
-              templateId: "",
-              templateName: "",
-              vars: {},
-            },
-            callToAction: "Dismiss Button",
-            buttonId: "dismissButton",
-          };
-          window.webkit.messageHandlers.clevertap.postMessage(messageData);
-        }
-      }
-
-      // Detect clicks outside the video container
-      document.addEventListener("touchstart", (e) => {
-        if (!videoContainer.contains(e.target)) {
-          // Call Android interface
-          var android_props = { C2A: "background" };
-          if (window.CleverTap) {
-            CleverTap.pushEvent("inapp_action", JSON.stringify(android_props));
-            CleverTap.dismissInAppNotification();
-          }
-
-          // Call IOS interface
-          else {
-            var ios_props = { C2A: "background" };
-            var message = {
-              action: "recordEventWithProps",
-              event: "inapp_action",
-              properties: ios_props,
-            };
-            if (
-              window.webkit &&
-              window.webkit.messageHandlers &&
-              window.webkit.messageHandlers.clevertap
-            ) {
-              window.webkit.messageHandlers.clevertap.postMessage(message);
+            // Call Android interface
+            var android_props = { C2A: "umute" };
+            if (window.CleverTap) {
+                CleverTap.pushEvent("inapp_action", JSON.stringify(android_props));
+            } else {
+                //call ios interface
+                var ios_props = { C2A: "umute" };
+                var message = {
+                    action: "recordEventWithProps",
+                    event: "inapp_action",
+                    properties: ios_props,
+                };
+                if (
+                    window.webkit &&
+                    window.webkit.messageHandlers &&
+                    window.webkit.messageHandlers.clevertap
+                ) {
+                    window.webkit.messageHandlers.clevertap.postMessage(message);
+                }
             }
-            const messageData = {
-              action: "triggerInAppAction",
-              actionJson: {
-                type: "close",
-                text: "",
-                android: "",
-                ios: "",
-                kv: {},
-                templateId: "",
-                templateName: "",
-                vars: {},
-              },
-              callToAction: "Dismiss Button",
-              buttonId: "dismissButton",
-            };
-            window.webkit.messageHandlers.clevertap.postMessage(messageData);
-          }
+        });
+
+        // iOS-specific behavior
+        if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            document.addEventListener('DOMContentLoaded', () => {
+                video.play().catch((error) => {
+                    console.log('iOS autoplay failed:', error);
+                });
+            });
         }
-      });
 
-      // Dragging logic with boundary constraints
-      let isDragging = false;
-      let offsetX = 0,
-        offsetY = 0;
+        // Detect platform and redirect on video click
+        video.addEventListener("click", () => {
+            const userAgent =
+                navigator.userAgent || navigator.vendor || window.opera;
 
-      videoContainer.addEventListener("mousedown", (e) => {
-        isDragging = true;
-        offsetX = e.clientX - videoContainer.offsetLeft;
-        offsetY = e.clientY - videoContainer.offsetTop;
-      });
+            // Check if user is on Android
+            if (window.CleverTap) {
+                window.location.href = androidUrl;
+            } else {
+                // For IOS
+                window.location.href = iosUrl;
+            }
+        });
 
-      document.addEventListener("mousemove", (e) => {
-        if (isDragging) {
-          let left = e.clientX - offsetX;
-          let top = e.clientY - offsetY;
-
-          const screenWidth = window.innerWidth;
-          const screenHeight = window.innerHeight;
-
-          const containerWidth = videoContainer.offsetWidth;
-          const containerHeight = videoContainer.offsetHeight;
-
-          left = Math.max(0, Math.min(screenWidth - containerWidth, left));
-          top = Math.max(0, Math.min(screenHeight - containerHeight, top));
-
-          videoContainer.style.left = `${left}px`;
-          videoContainer.style.top = `${top}px`;
+        // Function to handle close
+        function close_btn() {
+            console.log("Close button triggered");
+            if (window.CleverTap) {
+                var android_props = { C2A: "close" };
+                CleverTap.pushEvent("inapp_action", JSON.stringify(android_props));
+                CleverTap.dismissInAppNotification();
+            } else {
+                //call ios interface
+                var ios_props = { C2A: "close" };
+                var message = {
+                    action: "recordEventWithProps",
+                    event: "inapp_action",
+                    properties: ios_props,
+                };
+                if (
+                    window.webkit &&
+                    window.webkit.messageHandlers &&
+                    window.webkit.messageHandlers.clevertap
+                ) {
+                    window.webkit.messageHandlers.clevertap.postMessage(message);
+                }
+                const messageData = {
+                    action: "triggerInAppAction",
+                    actionJson: {
+                        type: "close",
+                        text: "",
+                        android: "",
+                        ios: "",
+                        kv: {},
+                        templateId: "",
+                        templateName: "",
+                        vars: {},
+                    },
+                    callToAction: "Dismiss Button",
+                    buttonId: "dismissButton",
+                };
+                window.webkit.messageHandlers.clevertap.postMessage(messageData);
+            }
         }
-      });
 
-      document.addEventListener("mouseup", () => {
-        isDragging = false;
-      });
+        // Detect clicks outside the video container
+        document.addEventListener("touchstart", (e) => {
+            if (!videoContainer.contains(e.target)) {
+                // Call Android interface
+                var android_props = { C2A: "background" };
+                if (window.CleverTap) {
+                    CleverTap.pushEvent("inapp_action", JSON.stringify(android_props));
+                    CleverTap.dismissInAppNotification();
+                }
 
-      videoContainer.addEventListener("touchstart", (e) => {
-        isDragging = true;
-        offsetX = e.touches[0].clientX - videoContainer.offsetLeft;
-        offsetY = e.touches[0].clientY - videoContainer.offsetTop;
-      });
+                // Call IOS interface
+                else {
+                    var ios_props = { C2A: "background" };
+                    var message = {
+                        action: "recordEventWithProps",
+                        event: "inapp_action",
+                        properties: ios_props,
+                    };
+                    if (
+                        window.webkit &&
+                        window.webkit.messageHandlers &&
+                        window.webkit.messageHandlers.clevertap
+                    ) {
+                        window.webkit.messageHandlers.clevertap.postMessage(message);
+                    }
+                    const messageData = {
+                        action: "triggerInAppAction",
+                        actionJson: {
+                            type: "close",
+                            text: "",
+                            android: "",
+                            ios: "",
+                            kv: {},
+                            templateId: "",
+                            templateName: "",
+                            vars: {},
+                        },
+                        callToAction: "Dismiss Button",
+                        buttonId: "dismissButton",
+                    };
+                    window.webkit.messageHandlers.clevertap.postMessage(messageData);
+                }
+            }
+        });
 
-      document.addEventListener("touchmove", (e) => {
-        if (isDragging) {
-          let left = e.touches[0].clientX - offsetX;
-          let top = e.touches[0].clientY - offsetY;
+        // Dragging logic with boundary constraints
+        let isDragging = false;
+        let offsetX = 0,
+            offsetY = 0;
 
-          const screenWidth = window.innerWidth;
-          const screenHeight = window.innerHeight;
+        videoContainer.addEventListener("mousedown", (e) => {
+            isDragging = true;
+            offsetX = e.clientX - videoContainer.offsetLeft;
+            offsetY = e.clientY - videoContainer.offsetTop;
+        });
 
-          const containerWidth = videoContainer.offsetWidth;
-          const containerHeight = videoContainer.offsetHeight;
+        document.addEventListener("mousemove", (e) => {
+            if (isDragging) {
+                let left = e.clientX - offsetX;
+                let top = e.clientY - offsetY;
 
-          left = Math.max(0, Math.min(screenWidth - containerWidth, left));
-          top = Math.max(0, Math.min(screenHeight - containerHeight, top));
+                const screenWidth = window.innerWidth;
+                const screenHeight = window.innerHeight;
 
-          videoContainer.style.left = `${left}px`;
-          videoContainer.style.top = `${top}px`;
-        }
-      });
+                const containerWidth = videoContainer.offsetWidth;
+                const containerHeight = videoContainer.offsetHeight;
 
-      document.addEventListener("touchend", () => {
-        isDragging = false;
-      });
+                left = Math.max(0, Math.min(screenWidth - containerWidth, left));
+                top = Math.max(0, Math.min(screenHeight - containerHeight, top));
+
+                videoContainer.style.left = `${left}px`;
+                videoContainer.style.top = `${top}px`;
+            }
+        });
+
+        document.addEventListener("mouseup", () => {
+            isDragging = false;
+        });
+
+        videoContainer.addEventListener("touchstart", (e) => {
+            isDragging = true;
+            offsetX = e.touches[0].clientX - videoContainer.offsetLeft;
+            offsetY = e.touches[0].clientY - videoContainer.offsetTop;
+        });
+
+        document.addEventListener("touchmove", (e) => {
+            if (isDragging) {
+                let left = e.touches[0].clientX - offsetX;
+                let top = e.touches[0].clientY - offsetY;
+
+                const screenWidth = window.innerWidth;
+                const screenHeight = window.innerHeight;
+
+                const containerWidth = videoContainer.offsetWidth;
+                const containerHeight = videoContainer.offsetHeight;
+
+                left = Math.max(0, Math.min(screenWidth - containerWidth, left));
+                top = Math.max(0, Math.min(screenHeight - containerHeight, top));
+
+                videoContainer.style.left = `${left}px`;
+                videoContainer.style.top = `${top}px`;
+            }
+        });
+
+        document.addEventListener("touchend", () => {
+            isDragging = false;
+        });
     </script>
-  </body>
+</body>
+
 </html>
