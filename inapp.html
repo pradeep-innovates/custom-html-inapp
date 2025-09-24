@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Rubik" rel="stylesheet" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>CSAT Popup</title>
+    <style>
+        :root {
+            --primary-color: #FF6D1F;
+            --gap: clamp(4px, 1.5vw, 8px);
+            /* spacing between squares */
+            /* Tier colors (base + strong for selected) */
+            --low-bg: #FEEEEE;
+            --low-text: #EB2E2E;
+            --low-strong: #EB2E2E;
+            --mid-bg: #FFF3D6;
+            --mid-text: #FFA700;
+            --mid-strong: #FFA700;
+            --high-bg: #E2F9F3;
+            --high-text: #008B44;
+            --high-strong: #008B44;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: transparent;
+        }
+
+        * {
+            font-family: 'Rubik'
+        }
+
+        /* Overlay popup */
+        .popup {
+            position: fixed;
+            inset: 0;
+            display: none;
+            /* -> flex in JS */
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        .popup.show .popup-content {
+            animation: slideUp .45s ease-out forwards;
+        }
+
+        .popup-content {
+            background: #fff;
+            width: min(540px, calc(100vw - 24px));
+            /* responsive width */
+            max-width: 540px;
+            margin: 0 12px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .15);
+            padding: 12px 10px 16px;
+            transform: translateY(100%);
+            position: relative;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(116, 116, 128, .08);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .close img {
+            display: block;
+            width: 20px;
+            height: 20px;
+        }
+
+        .top-heading {
+            margin: 2px 0 6px;
+            text-align: center;
+            padding: 0 8px;
+        }
+
+        .top-heading h5 {
+            margin: 8px 0 2px;
+            font-size: clamp(18px, 4.8vw, 20px);
+            font-weight: 600;
+            color: #0F0F0F;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .top-heading p {
+            margin: 0;
+            font-size: clamp(13px, 3.6vw, 14px);
+            line-height: 1.35;
+            color: #0F0F0F;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Number scale */
+        .scale-scroll {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 6px;
+        }
+
+        .scale-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            column-gap: var(--gap);
+            row-gap: 4px;
+            align-items: center;
+            justify-items: center;
+            width: 100%;
+            padding: 0 6px;
+        }
+
+        .rating-btn {
+            grid-row: 1;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            /* always square */
+            border-radius: 6px;
+            border: 1px solid transparent;
+            /* base border hidden */
+            font-weight: 700;
+            font-size: clamp(11px, 3.2vw, 14px);
+            cursor: pointer;
+            user-select: none;
+            transition: transform .15s, filter .15s, box-shadow .15s, border-color .15s, background-color .15s, color .15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rating-btn:hover {
+            transform: translateY(-1px);
+            filter: brightness(.98);
+        }
+
+        /* Selected state common */
+        .rating-btn.selected-rating {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+            border-width: 2px;
+        }
+
+        /* Tier-based default (unselected) colors — set via data-tier */
+        .rating-btn[data-tier="low"] {
+            background: var(--low-bg);
+            color: var(--low-text);
+        }
+
+        .rating-btn[data-tier="mid"] {
+            background: var(--mid-bg);
+            color: var(--mid-text);
+        }
+
+        .rating-btn[data-tier="high"] {
+            background: var(--high-bg);
+            color: var(--high-text);
+        }
+
+        /* Tier-based selected styling: stronger border & text */
+        .rating-btn.selected-rating[data-tier="low"] {
+            border-color: var(--low-strong);
+            background: var(--low-strong);
+            color: #ffffff;
+        }
+
+        .rating-btn.selected-rating[data-tier="mid"] {
+            border-color: var(--mid-strong);
+            background: var(--mid-strong);
+            color: #ffffff;
+        }
+
+        .rating-btn.selected-rating[data-tier="high"] {
+            border-color: var(--high-strong);
+            background: var(--high-strong);
+            color: #ffffff;
+        }
+
+        .hint-full-row {
+            grid-row: 2;
+            grid-column: 1 / span 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: clamp(10px, 2.8vw, 12px);
+            font-weight: 500;
+            padding: 2px 8px 0;
+            margin-bottom: 4px;
+            width: 100%;
+        }
+
+        .hint-left,
+        .hint-right {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        /* Sections */
+        .bad-rating-grid-row,
+        .positive-grid-row,
+        .finish-grid-row {
+            display: none;
+            grid-column: 1 / span 10;
+        }
+
+        .bad-rating-content h6 {
+            margin: 6px 0 8px;
+            font-weight: 700;
+            font-size: clamp(13px, 3.6vw, 14px);
+            color: #111827;
+        }
+
+        .bad-rating-content {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            /* align with rating buttons */
+            gap: 4px;
+            width: 100%;
+        }
+
+        .action-grid {
+            grid-column: 1 / span 10;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            /* 2 per row */
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .chip {
+            border: 1px solid #E7E7E7;
+            border-radius: 999px;
+            padding: 6px 10px;
+            font-size: 13px;
+            cursor: pointer;
+            background: #fff;
+            text-align: center;
+        }
+
+        .chip input {
+            display: none;
+        }
+
+        .chip input:checked+span {
+            background: var(--primary-color);
+            color: #fff;
+            border-color: var(--primary-color);
+        }
+
+        .pop {
+            grid-column: 1 / span 10;
+            width: 100%;
+        }
+
+        .pop textarea {
+            width: 100%;
+            box-sizing: border-box;
+            min-height: 68px;
+            border: 1px solid #e5eaf7;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 14px;
+        }
+
+        .btn {
+            width: 200px;
+            height: 38px;
+            border-radius: 999px;
+            border: none;
+            background: var(--primary-color);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            filter: brightness(.96);
+        }
+
+        .error-message {
+            color: #EB2E2E;
+            font-size: 13px;
+            margin: 8px 0 0;
+            display: none;
+        }
+
+        .reason-container {
+            font-size: 12px;
+            font-weight: 500;
+            grid-column: 1 / span 10;
+            width: 100%;
+            text-align: left;
+            padding-left: 4px;
+        }
+
+        .scale-grid {
+            grid-template-columns: repeat(10, 1fr);
+        }
+
+        @media (max-width: 360px) {
+            .btn {
+                width: 180px;
+            }
+
+            .popup-content {
+                padding: 12px 8px 14px;
+            }
+
+            .hint-full-row {
+                padding: 2px 2px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="myPopup" class="popup" aria-modal="true" role="dialog">
+        <div class="popup-content">
+            <div class="top-heading" id="headlingLine">
+                <h5>Feedback Survey</h5>
+                <p>How likely are you to recommend HUFT to others?</p>
+            </div>
+            <!-- SCALE (buttons + single-line hints) -->
+            <div id="scaleBlock" class="scale-scroll">
+                <div class="scale-grid" id="scaleGrid">
+                    <!-- Buttons injected by JS (row 1, columns 1..10) -->
+                    <div class="hint-full-row">
+                        <div class="hint-left"><span class="icon"></span><span>Not likely</span></div>
+                        <div class="hint-right"><span>Extremely likely</span><span class="icon"></span></div>
+                    </div>
+                    <!-- BAD/NEUTRAL GRID ROW (appears directly below the scale; aligned under "1") -->
+                    <div id="badGridRow" class="bad-rating-grid-row">
+                        <div class="bad-rating-container">
+                            <div class="bad-rating-content">
+                                <div class="reason-container">Tell us your reasons -</div>
+                                <!-- TWO ROWS, TWO REASONS EACH -->
+                                <div class="action-grid">
+                                    <label class="chip">
+                                        <input type="checkbox" class="checkBtn" value="option1" />
+                                        <span data-option="option1"></span>
+                                    </label>
+                                    <label class="chip">
+                                        <input type="checkbox" class="checkBtn" value="option2" />
+                                        <span data-option="option2"></span>
+                                    </label>
+                                    <label class="chip">
+                                        <input type="checkbox" class="checkBtn" value="option3" />
+                                        <span data-option="option3"></span>
+                                    </label>
+                                    <label class="chip">
+                                        <input type="checkbox" class="checkBtn" value="option4" />
+                                        <span data-option="option4"></span>
+                                    </label>
+                                </div>
+                                <div class="pop">
+                                    <textarea id="additionalDetails" placeholder="Others (please specify)"></textarea>
+                                </div>
+                                <div id="error-message" class="error-message">⚠ Please select any of the options</div>
+                                <!-- submit centered -->
+                                <div style="margin-top: 10px; text-align:center;">
+                                    <button id="submit" class="btn">SUBMIT</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- THANK YOU GRID ROW (for 7-10) -->
+                    <div id="thankYouGridRow" class="positive-grid-row">
+                        <div class="positive-rating-container" style="text-align:center; padding: 20px;">
+                            <h5 style="margin: 8px 0 6px; font-size: 18px;">Thank you for your response!</h5>
+                            <p style="margin: 0 0 12px; color: #6b7280; font-size: 14px;">We have received your
+                                feedback.</p>
+                            <button class="btn" id="thankYouDoneBtn" style="min-width: 150px;">Got it</button>
+                        </div>
+                    </div>
+                    <!-- FINISH GRID ROW (after submit for 1-6) -->
+                    <div id="finishGridRow" class="finish-grid-row">
+                        <div class="finish-rating-container" style="text-align:center;">
+                            <h5 style="margin: 8px 0 6px; font-size: 18px;">Thank you for your response!</h5>
+                            <p style="margin: 0 0 12px; color: #6b7280; font-size: 14px;">We have received your
+                                feedback.</p>
+                            <button class="btn" id="doneBtn" style="min-width: 150px;">Got it</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Options text
+        const optionMap = {
+            option1: "Offers & Pricing",
+            option2: "App Performance",
+            option3: "User Experience",
+            option4: "Product Unavailable",
+        };
+        let rating = 0;
+        /* --------- Helpers for color tiering --------- */
+        function getTier(score) {
+            if (score >= 1 && score <= 6) return "low";
+            if (score <= 8) return "mid";
+            return "high";
+        }
+        function buildRatingRow() {
+            const grid = document.getElementById("scaleGrid");
+            const hintRow = grid.querySelector(".hint-full-row");
+            for (let i = 1; i <= 10; i++) {
+                const tier = getTier(i);
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "rating-btn";
+                btn.textContent = i;
+                btn.dataset.value = i;
+                btn.dataset.tier = tier; // used by CSS to color + select
+                grid.insertBefore(btn, hintRow);
+            }
+        }
+        function setActive(value) {
+            document.querySelectorAll(".rating-btn").forEach(b => {
+                const isSelected = Number(b.dataset.value) === value;
+                b.classList.toggle("selected-rating", isSelected);
+            });
+        }
+        function showBadBlock(show) {
+            document.getElementById("badGridRow").style.display = show ? "block" : "none";
+        }
+        function showThankYouBlock(show) {
+            document.getElementById("thankYouGridRow").style.display = show ? "block" : "none";
+        }
+        function showHeadingBlock(show) {
+            document.getElementById("headlingLine").style.display = show ? "block" : "none";
+        }
+        function showFinishBlock(show) {
+            document.getElementById("finishGridRow").style.display = show ? "block" : "none";
+        }
+        /* --------- Updated selection logic (tier-based border/color) --------- */
+        function handleRatingSelect(val) {
+            rating = val;
+            setActive(val);
+            // Show options for 1–8, thank you message for 9–10
+            if (rating <= 8) {
+                showBadBlock(true);
+                showThankYouBlock(false);
+                showFinishBlock(false);
+                document.getElementById("error-message").style.display = "none";
+            } else {
+                showBadBlock(false);
+                showHeadingBlock(false);
+                document.querySelectorAll(
+                    ".rating-btn, .hint-full-row, #badGridRow, #thankYouGridRow, #headlingLine"
+                ).forEach(el => el.style.display = "none");
+                showThankYouBlock(true);
+                showFinishBlock(false);
+            }
+        }
+        document.addEventListener("DOMContentLoaded", () => {
+            // Fill reason labels
+            document.querySelectorAll("[data-option]").forEach((span) => {
+                const key = span.getAttribute("data-option");
+                span.textContent = optionMap[key] || key;
+            });
+            buildRatingRow();
+            // Attach click handlers to rating buttons after creation
+            document.querySelectorAll(".rating-btn").forEach(btn => {
+                btn.addEventListener("click", () => handleRatingSelect(Number(btn.dataset.value)));
+            });
+            // Submit click handler
+            document.getElementById("submit").addEventListener("click", (e) => {
+                e.preventDefault();
+                const selectedReasons = document.querySelectorAll('input.checkBtn:checked');
+                const messageDetails = document.getElementById("additionalDetails").value.trim();
+                const errorEl = document.getElementById("error-message");
+                if (rating === 0) {
+                    errorEl.textContent = "Please select a rating";
+                    errorEl.style.display = "block";
+                    return;
+                }
+                errorEl.style.display = "none";
+                const props = {
+                    EP_NPS_SCORE: rating,
+                    EP_NPS_JOURNEY: "SERVICE-B2B-E-Agreement-10POINT-CSAT",
+                    EP_COMMENT1: messageDetails
+                };
+                let idx = 1;
+                selectedReasons.forEach(cb => {
+                    const key = cb.value;
+                    const label = optionMap[key] || key;
+                    props["EP_REASON" + idx] = label; idx++;
+                });
+                if (window.CleverTap) {
+                    try { CleverTap.pushEvent("NPS_SUBMITTED", JSON.stringify(props)); } catch (e) { }
+                } else {
+                    console.log("NPS_SUBMITTED", props);
+                }
+                showHeadingBlock(false);
+                // Hide the entire scale (buttons + hints) after submit
+                document.querySelectorAll(
+                    ".rating-btn, .hint-full-row, #badGridRow, #thankYouGridRow, #headlingLine"
+                ).forEach(el => el.style.display = "none");
+                // Show finish block
+                showBadBlock(false);
+                showThankYouBlock(false);
+                showFinishBlock(true);
+            });
+            // Thank-you "Got it" for 9–10
+            document.getElementById("thankYouDoneBtn").addEventListener("click", () => {
+                const props = {
+                    EP_NPS_SCORE: rating,
+                    EP_NPS_JOURNEY: "SERVICE-B2B-E-Agreement-10POINT-CSAT",
+                    EP_COMMENT1: ""
+                };
+                if (window.CleverTap) {
+                    try { CleverTap.pushEvent("NPS_SUBMITTED", JSON.stringify(props)); } catch (e) { }
+                } else {
+                    console.log("NPS_SUBMITTED", props);
+                }
+                document.getElementById("myPopup").style.display = "none";
+            });
+            // Finish "Got it" for 1–8
+            document.getElementById("doneBtn").addEventListener("click", () => {
+                document.getElementById("myPopup").style.display = "none";
+            });
+            // Chip visual toggle
+            document.querySelectorAll(".checkBtn").forEach(cb => {
+                cb.addEventListener("change", (e) => {
+                    document.getElementById("error-message").style.display = "none";
+                    const label = e.target.closest(".chip");
+                    if (!label) return;
+                    if (e.target.checked) {
+                        label.style.background = "var(--primary-color)";
+                        label.style.color = "#fff";
+                        label.style.borderColor = "var(--primary-color)";
+                    } else {
+                        label.style.background = "#fff";
+                        label.style.color = "#374151";
+                        label.style.borderColor = "#d3dae1";
+                    }
+                });
+            });
+            // Show popup
+            const popup = document.getElementById("myPopup");
+            popup.style.display = "flex";
+            setTimeout(() => popup.classList.add("show"), 30);
+            // Close button
+            document.getElementById("close").addEventListener("click", () => {
+                if (window.CleverTap?.dismissInAppNotification) {
+                    CleverTap.dismissInAppNotification();
+                } else {
+                    popup.style.display = "none";
+                }
+            });
+            // Click outside to close
+            window.addEventListener("click", (evt) => {
+                if (evt.target === popup) popup.style.display = "none";
+                CleverTap.dismissInAppNotification();
+            });
+        });
+    </script>
+</body>
+
+</html>
