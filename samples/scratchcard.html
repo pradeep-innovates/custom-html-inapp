@@ -413,7 +413,13 @@
             } else if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.CleverTap) {
                 window.location.href = 'wzrk://exit';
             } else {
-                // Fallback or do nothing
+                console.log("Web Interface Exit Click");
+                var overlay = window.parent.document.getElementById('intentOpacityDiv');
+                var wrapper = window.parent.document.getElementById('intentPreview');
+                setTimeout(() => {
+                    overlay.remove();
+                    wrapper.remove();
+                }, 0);
             }
         }
 
@@ -434,9 +440,9 @@
                         event: eventName,
                         properties: props,
                     });
-                } else if (typeof clevertap !== "undefined") {
+                } else if (window.parent.clevertap) {
                     // Web interface
-                    clevertap.event.push(eventName, props);
+                    window.parent.clevertap.event.push(eventName, props);
                 } else {
                     console.log("CleverTap event:", eventName, props);
                 }
