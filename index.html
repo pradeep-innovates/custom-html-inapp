@@ -1,172 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Custom HTML InApp Templates</title>
 
-    <!-- Prism CSS - default to light theme -->
-    <link
-      id="prismTheme"
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <title>Custom HTML InApp Templates</title>
 
-    <style>
-      :root {
-        --bg-color: #f9f9f9;
-        --text-color: #000;
-        --header-bg: #fe5534; /* light mode main color */
-        --button-bg: #fe5534;
-        --button-hover: #cc4429; /* darker shade for hover */
-        --code-bg: #f4f4f4;
-      }
+  <!-- Prism CSS - default to light theme -->
+  <link id="prismTheme" rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" />
 
-      body.dark-mode {
-        --bg-color: #1e1e1e;
-        --text-color: #f0f0f0;
-        --header-bg: #ff8875; /* dark mode main color */
-        --button-bg: #ff8875;
-        --button-hover: #e66f65; /* darker shade for hover */
-        --code-bg: #2e2e2e;
-      }
+  <style>
+    :root {
+      --bg-color: #f9f9f9;
+      --text-color: #000;
+      --header-bg: #fe5534;
+      /* light mode main color */
+      --button-bg: #fe5534;
+      --button-hover: #cc4429;
+      /* darker shade for hover */
+      --code-bg: #f4f4f4;
+    }
 
-      body {
-        font-family: Arial, sans-serif;
-        background: var(--bg-color);
-        color: var(--text-color);
-        margin: 0;
-        padding: 2rem;
-        transition: background 0.3s, color 0.3s;
-      }
+    body.dark-mode {
+      --bg-color: #1e1e1e;
+      --text-color: #f0f0f0;
+      --header-bg: #ff8875;
+      /* dark mode main color */
+      --button-bg: #ff8875;
+      --button-hover: #e66f65;
+      /* darker shade for hover */
+      --code-bg: #2e2e2e;
+    }
 
-      header {
-        display: flex;
-        align-items: center;
-        justify-content: center; /* center the text by default */
-        position: relative;
-        background-color: var(--header-bg);
-        color: white;
-        padding: 1rem;
-        font-size: 1.5rem;
-        font-weight: bold;
-        border-radius: 8px;
-        margin-bottom: 2rem;
-      }
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 2rem;
+      transition: background 0.3s, color 0.3s;
+    }
 
-      .header-logo {
-        height: 40px; /* adjust as needed */
-        position: absolute;
-        left: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-      }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* center the text by default */
+      position: relative;
+      background-color: var(--header-bg);
+      color: white;
+      padding: 1rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
 
-      header > button.toggle-theme {
-        position: absolute;
-        top: 50%;
-        right: 1rem;
-        transform: translateY(-50%);
-        background: white;
-        color: var(--header-bg);
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: color 0.3s;
-      }
+    .header-logo {
+      height: 40px;
+      /* adjust as needed */
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
 
-      .toggle-theme {
-        position: absolute;
-        top: 50%;
-        right: 1rem;
-        transform: translateY(-50%);
-        background: white;
-        color: var(--header-bg);
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: color 0.3s;
-      }
+    header>button.toggle-theme {
+      position: absolute;
+      top: 50%;
+      right: 1rem;
+      transform: translateY(-50%);
+      background: white;
+      color: var(--header-bg);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
 
-      .toggle-theme:hover {
-        opacity: 0.9;
-      }
+    .toggle-theme {
+      position: absolute;
+      top: 50%;
+      right: 1rem;
+      transform: translateY(-50%);
+      background: white;
+      color: var(--header-bg);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
 
-      .template-box {
-        background: var(--bg-color);
-        color: var(--text-color);
-        border: 1px solid var(--text-color);
-        padding: 1rem;
-        border-radius: 8px;
-        margin-bottom: 2rem;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-      }
+    .toggle-theme:hover {
+      opacity: 0.9;
+    }
 
-      .template-box h3 {
-        margin-top: 0;
-      }
+    .template-box {
+      background: var(--bg-color);
+      color: var(--text-color);
+      border: 1px solid var(--text-color);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
 
-      .content-wrapper {
-        display: flex;
-        gap: 1.5rem;
-        flex-wrap: wrap;
-      }
+    .template-box h3 {
+      margin-top: 0;
+    }
 
-      .demo-content img {
-        width: 100%;
-        max-width: 400px;
-        height: 600px;
-        object-fit: contain;
-        border-radius: 8px;
-      }
+    .content-wrapper {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
 
-      .code-box {
-        position: relative;
-        flex: 1;
-        min-width: 400px;
-        height: 600px;
-        display: flex;
-        flex-direction: column;
-      }
+    .demo-content img {
+      width: 100%;
+      max-width: 400px;
+      height: 600px;
+      object-fit: contain;
+      border-radius: 8px;
+    }
 
-      .code-box pre {
-        background: var(--code-bg);
-        padding: 1rem;
-        overflow: auto;
-        border-radius: 4px;
-        flex: 1;
-        margin: 0;
-        white-space: pre;
-      }
+    .code-box {
+      position: relative;
+      flex: 1;
+      min-width: 400px;
+      height: 600px;
+      display: flex;
+      flex-direction: column;
+    }
 
-      .code-box pre code {
-        font-size: 0.85rem;
-      }
+    .code-box pre {
+      background: var(--code-bg);
+      padding: 1rem;
+      overflow: auto;
+      border-radius: 4px;
+      flex: 1;
+      margin: 0;
+      white-space: pre;
+    }
 
-      .copy-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        padding: 0.4rem 1rem;
-        background-color: var(--button-bg);
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-      }
+    .code-box pre code {
+      font-size: 0.85rem;
+    }
 
-      .copy-btn:hover {
-        background-color: var(--button-hover);
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <!-- <img
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 0.4rem 1rem;
+      background-color: var(--button-bg);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .copy-btn:hover {
+      background-color: var(--button-hover);
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <!-- <img
         src="https://dka575ofm4ao0.cloudfront.net/pages-transactional_logos/retina/148845/Logo_Logotype_White_BG_2x.png"
         alt="Logo"
         class="header-logo"
@@ -178,219 +183,274 @@
           class="header-logo"
         />
       </div> -->
-      Custom HTML InApp Templates
-      <button class="toggle-theme" id="toggleThemeBtn">Toggle Theme</button>
-    </header>
+    Custom HTML InApp Templates
+    <button class="toggle-theme" id="toggleThemeBtn">Toggle Theme</button>
+  </header>
 
-    <div id="container"></div>
+  <div id="container"></div>
 
-    <!-- Prism JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <!-- Prism JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 
-    <script>
-      const toggleBtn = document.getElementById("toggleThemeBtn");
-      const prismTheme = document.getElementById("prismTheme");
-      const currentTheme = localStorage.getItem("theme");
+  <script>
+    const toggleBtn = document.getElementById("toggleThemeBtn");
+    const prismTheme = document.getElementById("prismTheme");
+    const currentTheme = localStorage.getItem("theme");
 
-      function setTheme(theme) {
-        if (theme === "dark") {
-          document.body.classList.add("dark-mode");
-          prismTheme.href =
-            "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css";
-        } else {
-          document.body.classList.remove("dark-mode");
-          prismTheme.href =
-            "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css";
-        }
-        localStorage.setItem("theme", theme);
-      }
-
-      // On page load, apply stored theme
-      if (currentTheme === "dark") {
-        setTheme("dark");
+    function setTheme(theme) {
+      if (theme === "dark") {
+        document.body.classList.add("dark-mode");
+        prismTheme.href =
+          "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css";
       } else {
-        setTheme("light");
+        document.body.classList.remove("dark-mode");
+        prismTheme.href =
+          "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css";
       }
+      localStorage.setItem("theme", theme);
+    }
 
-      toggleBtn.addEventListener("click", () => {
-        const newTheme = document.body.classList.contains("dark-mode")
-          ? "light"
-          : "dark";
-        setTheme(newTheme);
-      });
+    // On page load, apply stored theme
+    if (currentTheme === "dark") {
+      setTheme("dark");
+    } else {
+      setTheme("light");
+    }
 
-      // Template logic
-      const templates = [
-        {
-          title: "Disappearing Inapp",
-          codeFile: "samples/disapp.html",
-          demoFile: "demos/disapp.gif",
-        },
-        {
-          title: "Footer Survey",
-          codeFile: "samples/footersurvey.html",
-          demoFile: "demos/footersurvey.gif",
-        },
-        {
-          title: "Feedback Rating with Playstore",
-          codeFile: "samples/feedbackratingplaystore.html",
-          demoFile: "demos/feedbackratingplaystore.gif",
-        },
-        {
-          title: "Stories",
-          codeFile: "samples/stories.html",
-          demoFile: "demos/stories.gif",
-        },
-        {
-          title: "Scratch Card",
-          codeFile: "samples/scratchcard.html",
-          demoFile: "demos/scratchcard.gif",
-        },
-        {
-          title: "Memory Flip Game",
-          codeFile: "samples/memoryflipgame.html",
-          demoFile: "demos/memoryflipgame.gif",
-        },
-        {
-          title: "Timer InApp",
-          codeFile: "samples/timerinapp.html",
-          demoFile: "demos/timerinapp.gif",
-        },
-        {
-          title: "Feedback Form",
-          codeFile: "samples/feedbackcamp.html",
-          demoFile: "demos/feedbackcamp.gif",
-        },
-        {
-          title: "Spin the wheel",
-          codeFile: "samples/spinwheel.html",
-          demoFile: "demos/spinwheel.gif",
-        },
-        {
-          title: "Copy coupon code",
-          codeFile: "samples/copycouponcode.html",
-          demoFile: "demos/copycouponcode.gif",
-        },
-        {
-          title: "Footer - Auto Dismiss",
-          codeFile: "samples/footerautodismiss.html",
-          demoFile: "demos/footerautodismiss.gif",
-        },
-        {
-          title: "Gif + copy code",
-          codeFile: "samples/gifcopycode.html",
-          demoFile: "demos/gifcopycode.gif",
-        },
-        {
-          title: "Carousel",
-          codeFile: "samples/carousel.html",
-          demoFile: "demos/carousel.gif",
-        },
-        {
-          title: "Gif - footer",
-          codeFile: "samples/gif-footer.html",
-          demoFile: "demos/gif-footer.gif",
-        },
-        {
-          title: "Gif - fullscreen",
-          codeFile: "samples/gif-fullscreen.html",
-          demoFile: "demos/gif-fullscreen.gif",
-        },
-        {
-          title: "Carousel - footer",
-          codeFile: "samples/carousel-footer.html",
-          demoFile: "demos/carousel-footer.gif",
-        },
-        {
-          title: "OTT PIP",
-          codeFile: "samples/ott-pip.html",
-          demoFile: "demos/ott-pip.gif",
-        },
-        {
-          title: "Ecommerce PIP",
-          codeFile: "samples/ecom-pip.html",
-          demoFile: "demos/ecom-pip.gif",
-        },
-        {
-          title: "Reminder PIP",
-          codeFile: "samples/reminder-pip.html",
-          demoFile: "demos/reminder-pip.gif",
-        },
-        {
-          title: "Watch Now Template",
-          codeFile: "samples/watch-now-template.html",
-          demoFile: "demos/watch-now-template.gif",
-        },
-        {
-          title: "Quick Quiz",
-          codeFile: "samples/quick-quiz.html",
-          demoFile: "demos/quick-quiz.gif",
-        },
-        {
-          title: "Gender Survey",
-          codeFile: "samples/gender-survey.html",
-          demoFile: "demos/gender-survey.gif",
-        },
-      ];
+    toggleBtn.addEventListener("click", () => {
+      const newTheme = document.body.classList.contains("dark-mode")
+        ? "light"
+        : "dark";
+      setTheme(newTheme);
+    });
 
-      const container = document.getElementById("container");
+    // Template logic
+    const templates = [
+      {
+        title: "Disappearing Inapp",
+        codeFile: "samples/disapp.html",
+        demoFile: "demos/disapp.gif",
+      },
+      {
+        title: "Footer Survey",
+        codeFile: "samples/footersurvey.html",
+        demoFile: "demos/footersurvey.gif",
+      },
+      {
+        title: "Feedback Rating with Playstore",
+        codeFile: "samples/feedbackratingplaystore.html",
+        demoFile: "demos/feedbackratingplaystore.gif",
+      },
+      {
+        title: "Stories",
+        codeFile: "samples/stories.html",
+        demoFile: "demos/stories.gif",
+      },
+      {
+        title: "Scratch Card",
+        codeFile: "samples/scratchcard.html",
+        demoFile: "demos/scratchcard.gif",
+      },
+      {
+        title: "Memory Flip Game",
+        codeFile: "samples/memoryflipgame.html",
+        demoFile: "demos/memoryflipgame.gif",
+      },
+      {
+        title: "Timer InApp",
+        codeFile: "samples/timerinapp.html",
+        demoFile: "demos/timerinapp.gif",
+      },
+      {
+        title: "Feedback Form",
+        codeFile: "samples/feedbackcamp.html",
+        demoFile: "demos/feedbackcamp.gif",
+      },
+      {
+        title: "Spin the wheel",
+        codeFile: "samples/spinwheel.html",
+        demoFile: "demos/spinwheel.gif",
+      },
+      {
+        title: "Copy coupon code",
+        codeFile: "samples/copycouponcode.html",
+        demoFile: "demos/copycouponcode.gif",
+      },
+      {
+        title: "Footer - Auto Dismiss",
+        codeFile: "samples/footerautodismiss.html",
+        demoFile: "demos/footerautodismiss.gif",
+      },
+      {
+        title: "Gif + copy code",
+        codeFile: "samples/gifcopycode.html",
+        demoFile: "demos/gifcopycode.gif",
+      },
+      {
+        title: "Carousel",
+        codeFile: "samples/carousel.html",
+        demoFile: "demos/carousel.gif",
+      },
+      {
+        title: "Gif - footer",
+        codeFile: "samples/gif-footer.html",
+        demoFile: "demos/gif-footer.gif",
+      },
+      {
+        title: "Gif - fullscreen",
+        codeFile: "samples/gif-fullscreen.html",
+        demoFile: "demos/gif-fullscreen.gif",
+      },
+      {
+        title: "Carousel - footer",
+        codeFile: "samples/carousel-footer.html",
+        demoFile: "demos/carousel-footer.gif",
+      },
+      {
+        title: "OTT PIP",
+        codeFile: "samples/ott-pip.html",
+        demoFile: "demos/ott-pip.gif",
+      },
+      {
+        title: "Ecommerce PIP",
+        codeFile: "samples/ecom-pip.html",
+        demoFile: "demos/ecom-pip.gif",
+      },
+      {
+        title: "Reminder PIP",
+        codeFile: "samples/reminder-pip.html",
+        demoFile: "demos/reminder-pip.gif",
+      },
+      {
+        title: "Watch Now Template",
+        codeFile: "samples/watch-now-template.html",
+        demoFile: "demos/watch-now-template.gif",
+      },
+      {
+        title: "Quick Quiz",
+        codeFile: "samples/quick-quiz.html",
+        demoFile: "demos/quick-quiz.gif",
+      },
+      {
+        title: "Gender Survey",
+        codeFile: "samples/gender-survey.html",
+        demoFile: "demos/gender-survey.gif",
+      },
+    ];
 
-      templates.forEach((template, index) => {
-        const box = document.createElement("div");
-        box.className = "template-box";
+    const baseUrl = "https://pradeep-innovates.github.io/custom-html-inapp/";
+    // const baseUrl = "http://127.0.0.1:5500/index.html";
 
-        const title = document.createElement("h3");
-        title.textContent = template.title;
+    // simple slug helper
+    function slugify(text) {
+      return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/[\s\W-]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    }
 
-        const contentWrapper = document.createElement("div");
-        contentWrapper.className = "content-wrapper";
+    const container = document.getElementById("container");
 
-        const demoImg = document.createElement("img");
-        demoImg.src = template.demoFile;
+    templates.forEach((template, index) => {
+      const slug = slugify(template.title);
+      const boxId = `template-${slug}`;
 
-        const demoContent = document.createElement("div");
-        demoContent.className = "demo-content";
-        demoContent.appendChild(demoImg);
+      const box = document.createElement("div");
+      box.className = "template-box";
+      box.id = boxId;
 
-        const codeBox = document.createElement("div");
-        codeBox.className = "code-box";
+      const title = document.createElement("h3");
+      // in-page anchor (keeps navigation without reloading)
+      const anchor = document.createElement("a");
+      anchor.href = `#${boxId}`;
+      anchor.textContent = template.title;
+      anchor.style.color = "inherit";
+      anchor.style.textDecoration = "none";
 
-        const pre = document.createElement("pre");
-        const code = document.createElement("code");
-        code.id = `code-block-${index}`;
-        code.className = "language-html"; // Important for Prism highlighting!
-        pre.appendChild(code);
+      // permalink button to copy full URL (base + hash)
+      const permalinkBtn = document.createElement("button");
+      permalinkBtn.textContent = "🔗";
+      permalinkBtn.title = "Copy permalink";
+      permalinkBtn.style.marginLeft = "0.5rem";
+      permalinkBtn.style.cursor = "pointer";
+      permalinkBtn.style.background = "transparent";
+      permalinkBtn.style.border = "none";
+      permalinkBtn.style.color = "inherit";
+      permalinkBtn.onclick = (e) => {
+        e.stopPropagation();
+        const url = baseUrl + "#" + boxId;
+        navigator.clipboard.writeText(url).then(() => {
+          const prev = permalinkBtn.textContent;
+          permalinkBtn.textContent = "✓";
+          setTimeout(() => (permalinkBtn.textContent = prev), 1000);
+        });
+      };
 
-        const copyBtn = document.createElement("button");
-        copyBtn.textContent = "Copy";
-        copyBtn.className = "copy-btn";
-        copyBtn.onclick = () => {
-          navigator.clipboard.writeText(code.textContent).then(() => {
-            copyBtn.textContent = "Copied";
-            setTimeout(() => {
-              copyBtn.textContent = "Copy";
-            }, 1000);
-          });
-        };
+      title.appendChild(anchor);
+      title.appendChild(permalinkBtn);
 
-        codeBox.appendChild(pre);
-        codeBox.appendChild(copyBtn);
+      const contentWrapper = document.createElement("div");
+      contentWrapper.className = "content-wrapper";
 
-        contentWrapper.appendChild(demoContent);
-        contentWrapper.appendChild(codeBox);
+      const demoImg = document.createElement("img");
+      demoImg.src = template.demoFile;
 
-        box.appendChild(title);
-        box.appendChild(contentWrapper);
-        container.appendChild(box);
+      const demoContent = document.createElement("div");
+      demoContent.className = "demo-content";
+      demoContent.appendChild(demoImg);
 
-        // Load code from file and highlight
-        fetch(template.codeFile)
-          .then((res) => res.text())
-          .then((data) => {
-            code.textContent = data;
-            Prism.highlightElement(code);
-          });
-      });
-    </script>
-  </body>
+      const codeBox = document.createElement("div");
+      codeBox.className = "code-box";
+
+      const pre = document.createElement("pre");
+      const code = document.createElement("code");
+      code.id = `code-block-${index}`;
+      code.className = "language-html"; // Important for Prism highlighting!
+      pre.appendChild(code);
+
+      const copyBtn = document.createElement("button");
+      copyBtn.textContent = "Copy";
+      copyBtn.className = "copy-btn";
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(code.textContent).then(() => {
+          copyBtn.textContent = "Copied";
+          setTimeout(() => {
+            copyBtn.textContent = "Copy";
+          }, 1000);
+        });
+      };
+
+      codeBox.appendChild(pre);
+      codeBox.appendChild(copyBtn);
+
+      contentWrapper.appendChild(demoContent);
+      contentWrapper.appendChild(codeBox);
+
+      box.appendChild(title);
+      box.appendChild(contentWrapper);
+      container.appendChild(box);
+
+      // Load code from file and highlight
+      fetch(template.codeFile)
+        .then((res) => res.text())
+        .then((data) => {
+          code.textContent = data;
+          Prism.highlightElement(code);
+        });
+    });
+
+    // On page load, if there's a hash, scroll into view
+    if (location.hash) {
+      const id = location.hash.slice(1);
+      const el = document.getElementById(id);
+      if (el) {
+        // slight delay so layout is ready
+        setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+      }
+    }
+  </script>
+</body>
+
 </html>
